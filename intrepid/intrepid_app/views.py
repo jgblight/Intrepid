@@ -6,15 +6,15 @@ from django.contrib.auth.decorators import login_required
 from intrepid_app.models import Profile
 from django import forms
 
-from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 
 # Create your views here.
 
 def login_view(request):
-    login_message = ''
+    message = ''
     if request.method == 'POST':
-        form = AuthenticationForm(request.POST) # A form bound to the POST data
+        form = AuthenticationForm(data=request.POST) # A form bound to the POST data
+        print form.errors
         if form.is_valid(): # All validation rules pass
             username = form.username
             password = form.password
@@ -24,14 +24,16 @@ def login_view(request):
                     login(request, user)
                     redirect('index')
                 else:
-                    redirect('login')
+                    message = 'User not active'
             else:
-                redirect('login')
-    else:
-        form = AuthenticationForm() # An unbound form
+                message = 'Username or password incorrect'
+        else:
+            message = 'invalid form'
+    form = AuthenticationForm() # An unbound form
 
     return render(request, 'login.html', {
         'form': form,
+        'message': message
     })
 
 def signup_view(request):
