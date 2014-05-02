@@ -17,4 +17,5 @@ urlpatterns = patterns('',
 
 urlpatterns += patterns('intrepid_app.views',
 	url(r'^$','index_view'),
+	url(r'^index$','index_view'),
 	url(r'^signup$','signup_view'))
