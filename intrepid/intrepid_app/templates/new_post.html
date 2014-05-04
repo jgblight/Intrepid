@@ -1,12 +1,83 @@
 {% load bootstrap %}
+<!DOCTYPE html>
 <html>
 <head>
-<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+	<style type="text/css">
+	  html { height: 100% }
+	  body { height: 100%; margin: 0; padding: 0 }
+	  .map-ancestor {height: 100% }
+	  #map-canvas { height: 100% }
+	</style>
+	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+	<script type="text/javascript"
+	      src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDml8K6lGP_FoE7gH8ffhCAdN8Dkltf1as&libraries=places&sensor=false">
+    </script>
+
+	<script type="text/javascript">
+	var map;
+	var places = [];
+
+	function search_callback(results,status) {
+		if (status == google.maps.places.PlacesServiceStatus.OK) {
+			places = results
+			var options = [];
+			$.each(results,function(index,value){
+				options.push('<option value="'+ index +'">'+ value.name +'</option>');
+			});
+			$('#id_location').html(options.join(''));
+		}
+
+	};
+
+	function initialize() {
+		var mapOptions = {
+          zoom: 6,
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        map = new google.maps.Map($("#map-canvas")[0], mapOptions);
+		var service = new google.maps.places.PlacesService(map);
+
+		$("#id_location_search").keypress(function(e) {
+		    if(e.which == 32) {
+		        var txt = $("#id_location_search")[0].value;
+				var request = {
+					query: txt
+				};
+			service.textSearch(request,search_callback);
+		    }
+		});
+
+		$( "#id_location" ).change(function () {
+			var place_selected = $( "#id_location option:selected" )[0]
+			if (typeof place_selected !== 'undefined') {
+    			var place_id = place_selected.value;
+				console.log(places[place_id]);	
+				$("#id_loc_name").val(places[place_id].name);
+				$("#id_lat").val(places[place_id].geometry.location.lat());
+				$("#id_lon").val(places[place_id].geometry.location.lng());
+			}
+  		}).change();	
+	};
+
+	$( window ).load(initialize)
+	</script>
 </head>
 <body>
-<form action="signup" method="post">{% csrf_token %}
-{{ form|bootstrap_horizontal }}
-<input type="submit" class="btn btn-default" value="Create" />
-</form>
+<div class="container map-ancestor">
+<div class="row map-ancestor">
+  <div class="col-md-6 map-ancestor">
+	<div id="map-canvas"></div>
+  </div>
+  <div class="col-md-6">
+	<form action="/post/new" method="post">{% csrf_token %}
+	{{ form|bootstrap_horizontal }}
+	<input type="submit" class="btn btn-default" value="Create" />
+	</form>
+  </div>
+</div>
+</div>
+
 </body>
 </html>

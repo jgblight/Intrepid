@@ -1,11 +1,13 @@
 import re
+import datetime
 from django.shortcuts import render,redirect
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
-from intrepid_app.models import Profile,Trip
+from intrepid_app.models import Profile,Trip, Pin,Location
 from django import forms
+from django.forms.extras import SelectDateWidget
 
 
 # Create your views here.
@@ -69,7 +71,7 @@ def signup_view(request):
 
 class TripForm(forms.Form):
     name = forms.CharField(label="Title",max_length=200)
-    start = forms.DateField(label="Start Date",widget=forms.DateInput)
+    start = forms.DateField(label="Start Date",initial=datetime.date.today(),widget=SelectDateWidget)
     description = forms.CharField(label="Description",widget=forms.Textarea)
 
 @login_required
@@ -83,7 +85,7 @@ def new_trip_view(request):
 
             new_trip = Trip(name=name,text=description,start_date=start,user=request.user)
             new_trip.save()
-            redirect("/") #TODO: should redirect to trip page
+            return redirect(index_view) #TODO: should redirect to trip page
     else:
         form = TripForm()
     return render(request, 'new_trip.html', {
@@ -93,21 +95,38 @@ def new_trip_view(request):
 class NewPostForm(forms.Form):
     name = forms.CharField(label="Title",max_length=200)
     trip = forms.CharField(label="Trip")
+    location_search = forms.CharField(label="Location") #TODO: get rid of these
+    location = forms.CharField(widget=forms.Select)
+    loc_name = forms.CharField(widget=forms.HiddenInput)
+    lat = forms.FloatField(widget=forms.HiddenInput)
+    lon = forms.FloatField(widget=forms.HiddenInput)
     tracks = forms.BooleanField(label="Make Tracks?",widget=forms.CheckboxInput)
-    date = forms.DateField(label="Start Date",widget=forms.DateInput)
+    date = forms.DateField(label="Start Date",initial=datetime.date.today(),widget=SelectDateWidget)
     description = forms.CharField(label="Description",widget=forms.Textarea)
 
     def __init__(self, user, *args, **kwargs):
-        super(waypointForm, self).__init__(*args, **kwargs)
-        self.fields['trip'] = forms.ChoiceField(label="Trip",choices=[ (o.id, str(o)) for o in Trip.objects.filter(user=user)])
+        super(NewPostForm, self).__init__(*args, **kwargs)
+        self.fields['trip'] = forms.ChoiceField(label="Trip",choices=[ (o.id, o.name) for o in Trip.objects.filter(user=user)])
 
 @login_required
 def new_post_view(request):
     if request.method == "POST":
         form = NewPostForm(request.user,request.POST)
         if form.is_valid():
-            #process form
-            redirect("/") #TODO: should redirect to trip page
+            lat = form.cleaned_data['lat']
+            lon = form.cleaned_data['lon']
+            location_name = form.cleaned_data['loc_name']
+            location = Location(lat=lat,lon=lon,name=location_name)
+            location.save()
+
+            trip = Trip.objects.get(pk=form.cleaned_data['trip'])
+            name = form.cleaned_data['name']
+            pin_date = form.cleaned_data['date']
+            tracks = form.cleaned_data['tracks']
+            text = form.cleaned_data['description']
+            pin = Pin(trip=trip,name=name,pin_date=pin_date,location=location,tracks=tracks,text=text)
+            pin.save()
+            return redirect(index_view) #TODO: should redirect to trip page
     else:
         form = NewPostForm(request.user)
     return render(request, 'new_post.html', {
