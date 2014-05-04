@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
-from intrepid_app.models import Profile
+from intrepid_app.models import Profile,Trip
 from django import forms
 
 
@@ -59,15 +59,61 @@ def signup_view(request):
             user = User.objects.create_user(email, email, password)
             user.save()
             user = authenticate(username=email,password=password)
-            print 'logging in'
             login(request, user)
-            print 'redirecting'
             return redirect(index_view)
     else:
         form = SignupForm()
     return render(request, 'signup.html', {
         'form': form
         })
+
+class TripForm(forms.Form):
+    name = forms.CharField(label="Title",max_length=200)
+    start = forms.DateField(label="Start Date",widget=forms.DateInput)
+    description = forms.CharField(label="Description",widget=forms.Textarea)
+
+@login_required
+def new_trip_view(request):
+    if request.method == "POST":
+        form = TripForm(request.POST)
+        if form.is_valid():
+            name = form.cleaned_data['name']
+            start = form.cleaned_data['start']
+            description = form.cleaned_data['description']
+
+            new_trip = Trip(name=name,text=description,start_date=start,user=request.user)
+            new_trip.save()
+            redirect("/") #TODO: should redirect to trip page
+    else:
+        form = TripForm()
+    return render(request, 'new_trip.html', {
+        'form': form
+        })
+
+class NewPostForm(forms.Form):
+    name = forms.CharField(label="Title",max_length=200)
+    trip = forms.CharField(label="Trip")
+    tracks = forms.BooleanField(label="Make Tracks?",widget=forms.CheckboxInput)
+    date = forms.DateField(label="Start Date",widget=forms.DateInput)
+    description = forms.CharField(label="Description",widget=forms.Textarea)
+
+    def __init__(self, user, *args, **kwargs):
+        super(waypointForm, self).__init__(*args, **kwargs)
+        self.fields['trip'] = forms.ChoiceField(label="Trip",choices=[ (o.id, str(o)) for o in Trip.objects.filter(user=user)])
+
+@login_required
+def new_post_view(request):
+    if request.method == "POST":
+        form = NewPostForm(request.user,request.POST)
+        if form.is_valid():
+            #process form
+            redirect("/") #TODO: should redirect to trip page
+    else:
+        form = NewPostForm(request.user)
+    return render(request, 'new_post.html', {
+        'form': form
+        })
+
 
 @login_required
 def index_view(request):
