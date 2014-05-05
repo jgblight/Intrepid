@@ -72,7 +72,7 @@ def signup_view(request):
 class TripForm(forms.Form):
     name = forms.CharField(label="Title",max_length=200)
     start = forms.DateField(label="Start Date",initial=datetime.date.today(),widget=SelectDateWidget)
-    description = forms.CharField(label="Description",widget=forms.Textarea)
+    description = forms.CharField(label="Description",widget=forms.Textarea,required=False)
 
 @login_required
 def new_trip_view(request):
@@ -95,14 +95,12 @@ def new_trip_view(request):
 class NewPostForm(forms.Form):
     name = forms.CharField(label="Title",max_length=200)
     trip = forms.CharField(label="Trip")
-    location_search = forms.CharField(label="Location") #TODO: get rid of these
-    location = forms.CharField(widget=forms.Select)
-    loc_name = forms.CharField(widget=forms.HiddenInput)
+    loc_name = forms.CharField(label="Location")
     lat = forms.FloatField(widget=forms.HiddenInput)
     lon = forms.FloatField(widget=forms.HiddenInput)
-    tracks = forms.BooleanField(label="Make Tracks?",widget=forms.CheckboxInput)
+    tracks = forms.BooleanField(label="Make Tracks?",widget=forms.CheckboxInput,required=False)
     date = forms.DateField(label="Start Date",initial=datetime.date.today(),widget=SelectDateWidget)
-    description = forms.CharField(label="Description",widget=forms.Textarea)
+    description = forms.CharField(label="Description",widget=forms.Textarea,required=False)
 
     def __init__(self, user, *args, **kwargs):
         super(NewPostForm, self).__init__(*args, **kwargs)
