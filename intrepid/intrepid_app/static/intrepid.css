@@ -7,6 +7,16 @@
 	  .fill {	height : 100%;
 	  			margin : 0px;
 	  			padding : 0px; }
+	  
+	  .insert-holder { margin-top : 10px;
+	  					display : inline-block;
+	  					margin-left : auto;
+	  					margin-right : auto;
+	  					padding : 0px;
+	  					}
+	  .insert-image { 	max-width : 200px;}
+
+
 	  #map-canvas { height : 100% }
 
 	  #trip-image { width : 100%;}
@@ -17,3 +27,7 @@
 	  #pin-div  { height : 70%;
 	  				display: none;
 	  				background-color : #CCCCCC;}
+
+	  #profile-div { text-align: center}
+
+

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+
+	<link rel="stylesheet" href="/static/intrepid.css">
+	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+	<script type="text/javascript"
+	      src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDml8K6lGP_FoE7gH8ffhCAdN8Dkltf1as&libraries=places&sensor=false">
+    </script>
+    <script type="text/javascript">
+	var map;
+
+	function initialize() {
+		var mapOptions = {
+		  center: new google.maps.LatLng(0,0),
+          zoom: 3,
+          mapTypeId: google.maps.MapTypeId.TERRAIN
+        };
+        map = new google.maps.Map($("#map-canvas")[0], mapOptions);
+    };
+
+	$( window ).load(initialize);
+	</script>
+
+</head>
+<body>
+
+<div class="container fill width-fill">
+<div class="row fill">
+  <div class="col-xs-6 col-sm-8 fill">
+	<div id="map-canvas"></div>
+  </div>
+  <div class="col-xs-6 col-sm-4 fill" id="profile-div">
+  	<div class="insert-holder">
+  		<img class="insert-image" src="http://placekitten.com/500/500">
+  	</div>
+  	{% if user.first_name %}
+  	<h2 class="title-text">{{user.first_name}} {{user.last_name}}</h2>
+  	{% else %}
+  	<h2 class="title-text">{{user.username}}</h2>
+  	{% endif %}
+  	{% if user.profile.hometown %}
+  	<p class="location-text">{{user.profile.hometown.name}}</p>
+  	{% else %}
+  	<p class="location-text">&nbsp;</p>
+  	{% endif %}
+  	<p class="blurb"> {{user.profile.text}} </p>
+
+
+  </div>
+</div>
+</div>
+
+</body>
+</html>

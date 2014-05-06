@@ -11,13 +11,13 @@ class Location(models.Model):
 
 class Profile(models.Model):
     user = models.OneToOneField(User)
-    hometown = models.ForeignKey(Location)
-    text = models.TextField()
+    hometown = models.ForeignKey(Location,blank=True,null=True)
+    text = models.TextField(blank=True)
     created = models.DateTimeField(auto_now=True)
 
 def create_profile(sender, **kwargs):
-    user = kw["instance"]
-    if kw["created"]:
+    user = kwargs["instance"]
+    if kwargs["created"]:
         profile = Profile(user=user)
         profile.save()
 

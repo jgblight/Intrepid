@@ -139,7 +139,6 @@ def index_view(request):
         'user': request.user,
     })
 
-@login_required
 def trip_view(request,trip_id):
     trip = get_object_or_404(Trip, pk=trip_id)
     pins = trip.pin_set.all()
@@ -158,4 +157,9 @@ def trip_view(request,trip_id):
         'center_lat' : center_lat,
         'center_lon' : center_lon
         })
+
+def profile_view(request,user):
+    return render(request, 'profile.html', {
+        'user': User.objects.get(username=user),
+    })
 
