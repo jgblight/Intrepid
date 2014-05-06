@@ -1,0 +1,19 @@
+	  html { height: 100% }
+	  body { height: 100%; 
+	  		margin: 0; 
+	  		padding: 0 }
+	  .width-fill { width : 100%;}
+
+	  .fill {	height : 100%;
+	  			margin : 0px;
+	  			padding : 0px; }
+	  #map-canvas { height : 100% }
+
+	  #trip-image { width : 100%;}
+	  #trip-image-div { height : 30%;
+	  					overflow : hidden;}
+	  #trip-div { 	height : 70%;
+	  				background-color : #EEEEEE;}
+	  #pin-div  { height : 70%;
+	  				display: none;
+	  				background-color : #CCCCCC;}

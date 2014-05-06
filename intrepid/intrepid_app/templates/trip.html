@@ -1,0 +1,83 @@
+{% load bootstrap %}
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+
+	<link rel="stylesheet" href="/static/intrepid.css">
+	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+	<script type="text/javascript"
+	      src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDml8K6lGP_FoE7gH8ffhCAdN8Dkltf1as&libraries=places&sensor=false">
+    </script>
+    <script type="text/javascript">
+	var map;
+
+	function pinListener(info) {
+		var pin_div = $("#pin-div");
+		console.log(pin_div)
+		pin_div.html(info.name);
+		$("#trip-div").hide();
+		pin_div.show();
+
+	};
+
+	function initialize() {
+		var mapOptions = {
+		  center: new google.maps.LatLng({{center_lat}}, {{center_lon}}),
+          zoom: 5,
+          mapTypeId: google.maps.MapTypeId.TERRAIN
+        };
+        map = new google.maps.Map($("#map-canvas")[0], mapOptions);
+
+        var loc,marker;
+        var pathArr = [];
+        {% for p in pins %}
+        	loc = new google.maps.LatLng({{p.location.lat}},{{p.location.lon}})
+			marker = new google.maps.Marker({	
+				position: loc,
+			});
+			marker.setMap(map);
+			{% if p.tracks %}
+				pathArr.push(loc);
+			{% endif %}
+
+			google.maps.event.addListener(marker, 'click', function() {
+				var info = { 
+					name : "{{ p.name }}",
+					description : "{{ p.description }}"
+				};
+				pinListener(info);
+			});
+        {% endfor %}
+		
+		poly = new google.maps.Polyline({
+			path: pathArr,
+			strokeColor: "#594c25",
+			strokeOpacity: 1.0,
+			strokeWeight: 2
+		});
+		poly.setMap(map);
+	};
+
+	$( window ).load(initialize);
+	</script>
+
+</head>
+<body>
+
+<div class="container fill width-fill">
+<div class="row fill">
+  <div class="col-sm-6 col-md-6 fill">
+	<div id="map-canvas"></div>
+  </div>
+  <div class="col-sm-6 col-md-6 fill">
+  	<div id="trip-image-div"> <img id="trip-image" src="http://placekitten.com/500/300" /></div> 
+  	<div id="trip-div">{{trip.name}}</div>
+  	<div id="pin-div"></div>
+  </div>
+</div>
+</div>
+
+</body>
+</html>
