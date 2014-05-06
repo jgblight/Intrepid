@@ -20,4 +20,5 @@ urlpatterns += patterns('intrepid_app.views',
 	url(r'^index$','index_view'),
 	url(r'^signup$','signup_view'),
 	url(r'^trip/new$','new_trip_view'),
+	url(r'^trip/(?P<trip_id>[0-9]+)$','trip_view'),
 	url(r'^post/new$','new_post_view'))

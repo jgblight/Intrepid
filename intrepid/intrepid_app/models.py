@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models.signals import post_save
 from django.contrib.auth.models import User
 
 # Create your models here.
@@ -14,12 +15,19 @@ class Profile(models.Model):
     text = models.TextField()
     created = models.DateTimeField(auto_now=True)
 
+def create_profile(sender, **kwargs):
+    user = kw["instance"]
+    if kw["created"]:
+        profile = Profile(user=user)
+        profile.save()
+
+post_save.connect(create_profile,sender=User)
+
 class Trip(models.Model):
     user = models.ForeignKey(User)
     name = models.CharField(max_length=200)
     text = models.TextField()
-    start_date = models.DateTimeField()
-    end_date = models.DateTimeField(blank=True,null=True)
+    active = models.BooleanField(default=True)
 
 class Pin(models.Model):
     trip = models.ForeignKey(Trip)

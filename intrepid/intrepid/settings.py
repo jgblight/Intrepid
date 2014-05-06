@@ -84,3 +84,5 @@ LOGIN_REDIRECT_URL = "/"
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
 STATIC_URL = '/static/'
+
+AUTH_PROFILE_MODULE = 'intrepid_app.Profile'

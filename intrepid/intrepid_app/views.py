@@ -1,6 +1,6 @@
 import re
 import datetime
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm
@@ -15,6 +15,7 @@ from django.forms.extras import SelectDateWidget
 class SignupForm(forms.Form):
     first_name = forms.CharField(label="First Name", max_length=100)
     last_name = forms.CharField(label="Last Name", max_length=100)
+    username = forms.CharField(label="Username",max_length=100)
     email = forms.EmailField(label="Email")
     password1 = forms.CharField(label="Password",
         widget=forms.PasswordInput)
@@ -35,7 +36,8 @@ class SignupForm(forms.Form):
                 code='invalid_email',
             )
 
-        if User.objects.filter(username=email).count():
+        username = self.cleaned_data.get("username")
+        if User.objects.filter(username=username).count():
             raise forms.ValidationError(
                 self.error_messages['duplicate_email'],
                 code='duplicate_email',
@@ -56,11 +58,12 @@ def signup_view(request):
         if form.is_valid():
 
             # create user and authenticate
+            username = form.cleaned_data['username']
             email = form.cleaned_data['email']
             password = form.cleaned_data['password2']
-            user = User.objects.create_user(email, email, password)
+            user = User.objects.create_user(username, email, password)
             user.save()
-            user = authenticate(username=email,password=password)
+            user = authenticate(username=username,password=password)
             login(request, user)
             return redirect(index_view)
     else:
@@ -71,7 +74,6 @@ def signup_view(request):
 
 class TripForm(forms.Form):
     name = forms.CharField(label="Title",max_length=200)
-    start = forms.DateField(label="Start Date",initial=datetime.date.today(),widget=SelectDateWidget)
     description = forms.CharField(label="Description",widget=forms.Textarea,required=False)
 
 @login_required
@@ -80,10 +82,9 @@ def new_trip_view(request):
         form = TripForm(request.POST)
         if form.is_valid():
             name = form.cleaned_data['name']
-            start = form.cleaned_data['start']
             description = form.cleaned_data['description']
 
-            new_trip = Trip(name=name,text=description,start_date=start,user=request.user)
+            new_trip = Trip(name=name,text=description,user=request.user)
             new_trip.save()
             return redirect(index_view) #TODO: should redirect to trip page
     else:
@@ -137,4 +138,24 @@ def index_view(request):
     return render(request, 'index.html', {
         'user': request.user,
     })
+
+@login_required
+def trip_view(request,trip_id):
+    trip = get_object_or_404(Trip, pk=trip_id)
+    pins = trip.pin_set.all()
+
+    center_lat = 0.0;
+    center_lon = 0.0;
+    for p in pins:
+        center_lat += p.location.lat
+        center_lon += p.location.lon
+    center_lat /= len(pins)
+    center_lon /= len(pins)
+
+    return render(request, 'trip.html', {
+        'trip' : trip,
+        'pins' : pins,
+        'center_lat' : center_lat,
+        'center_lon' : center_lon
+        })
 
