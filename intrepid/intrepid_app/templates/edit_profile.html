@@ -1,3 +1,4 @@
+{% load bootstrap %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -36,17 +37,7 @@
   	<div class="insert-holder">
   		<img class="insert-image" src="http://placekitten.com/500/500">
   	</div>
-  	{% if user.first_name %}
-  	<h2 class="title-text">{{user.first_name}} {{user.last_name}}</h2>
-  	{% else %}
-  	<h2 class="title-text">{{user.username}}</h2>
-  	{% endif %}
-  	{% if user.profile.hometown %}
-  	<p class="location-text">{{user.profile.hometown.name}}</p>
-  	{% else %}
-  	<p class="location-text">&nbsp;</p>
-  	{% endif %}
-  	<p class="blurb"> {{user.profile.text}} </p>
+  	{{ form|bootstrap }}
 
 
   </div>

@@ -163,3 +163,28 @@ def profile_view(request,user):
         'user': User.objects.get(username=user),
     })
 
+class EditProfileForm(forms.Form):
+    first_name = forms.CharField(required=False)
+    last_name = forms.CharField(required=False)
+    hometown_name = forms.CharField(required=False)
+    lat = forms.FloatField(widget=forms.HiddenInput,required=False)
+    lon = forms.FloatField(widget=forms.HiddenInput,required=False)
+    text = forms.CharField(widget=forms.Textarea,required=False)
+
+@login_required
+def edit_profile_view(request,user):
+    if not user == request.user.username:
+        return redirect("/profile/" + user)
+    if request.method == "POST":
+        form = EditProfileForm(request.POST)
+        if form.is_valid():
+            # 
+            
+            return redirect("/profile/" + user)
+    else:
+        form = EditProfileForm()
+    return render(request, 'edit_profile.html', {
+        'user' : User.objects.get(username=user),
+        'form' : form 
+    })
+
