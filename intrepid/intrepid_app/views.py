@@ -158,9 +158,9 @@ def trip_view(request,trip_id):
         'center_lon' : center_lon
         })
 
-def profile_view(request,user):
+def profile_view(request,username):
     return render(request, 'profile.html', {
-        'user': User.objects.get(username=user),
+        'user': User.objects.get(username=username),
     })
 
 class EditProfileForm(forms.Form):
@@ -172,19 +172,40 @@ class EditProfileForm(forms.Form):
     text = forms.CharField(widget=forms.Textarea,required=False)
 
 @login_required
-def edit_profile_view(request,user):
-    if not user == request.user.username:
-        return redirect("/profile/" + user)
+def edit_profile_view(request,username):
+    if not username == request.user.username:
+        return redirect("/profile/" + username)
     if request.method == "POST":
         form = EditProfileForm(request.POST)
         if form.is_valid():
-            # 
+            user = User.objects.get(username=username)
+            profile = user.get_profile()
+
+            lat = form.cleaned_data['lat']
+            lon = form.cleaned_data['lon']
+            location_name = form.cleaned_data['hometown_name']
+            if lat and lon and location_name:
+                location = Location(lat=lat,lon=lon,name=location_name)
+                location.save()
+                profile.hometown = location
+
+            if form.cleaned_data['first_name']:
+                user.first_name = form.cleaned_data['first_name']
+
+            if form.cleaned_data['last_name']:
+                user.last_name = form.cleaned_data['last_name']
+
+            if form.cleaned_data['text']:
+                profile.text = form.cleaned_data['text']
+
+            profile.save()
+            user.save()
             
-            return redirect("/profile/" + user)
+            return redirect("/profile/" + username)
     else:
         form = EditProfileForm()
     return render(request, 'edit_profile.html', {
-        'user' : User.objects.get(username=user),
+        'user' : User.objects.get(username=username),
         'form' : form 
     })
 

@@ -14,12 +14,49 @@
 	var map;
 
 	function initialize() {
-		var mapOptions = {
+		  var mapOptions = {
 		  center: new google.maps.LatLng(0,0),
-          zoom: 3,
+          zoom: 5,
           mapTypeId: google.maps.MapTypeId.TERRAIN
         };
-        map = new google.maps.Map($("#map-canvas")[0], mapOptions);
+      map = new google.maps.Map($("#map-canvas")[0], mapOptions);
+      $("input").addClass("form-control")
+      $("textarea").addClass("form-control")
+
+      {% if user.first_name %}
+      $("#id_first_name").val("{{user.first_name}}")
+      $("#id_last_name").val("{{user.last_name}}")
+      {% else %}
+      $("#id_first_name").attr("placeholder","First Name")
+      $("#id_last_name").attr("placeholder","Last Name")
+      {% endif %}
+
+      var searchbox = new google.maps.places.Autocomplete(document.getElementById("id_hometown_name"));
+
+      {% if user.profile.hometown %}
+      $("#id_hometown_name").val("{{user.profile.hometown.name}}")
+      {% else %}
+      $("#id_hometown_name").attr("placeholder","Enter your hometown..")
+      {% endif %}
+
+      {% if user.profile.text %}
+      $("#id_text").val("{{user.profile.text}}")
+      {% else %}
+      $("#id_text").attr("placeholder","Tell us about yourself..")
+      {% endif %}
+
+      google.maps.event.addListener(searchbox, 'place_changed', function() {
+        var place = searchbox.getPlace();
+        $("#id_lat").val(place.geometry.location.lat());
+        $("#id_lon").val(place.geometry.location.lng());
+        var marker = new google.maps.Marker({
+          position: place.geometry.location,
+          title: place.name,
+          map: map
+        });
+        map.setCenter(marker.getPosition());
+      }); 
+
     };
 
 	$( window ).load(initialize);
@@ -37,7 +74,15 @@
   	<div class="insert-holder">
   		<img class="insert-image" src="http://placekitten.com/500/500">
   	</div>
-  	{{ form|bootstrap }}
+  	<form action="/profile/{{user.username}}/edit" method="post">{% csrf_token %}
+      {{ form.non_field_errors }}
+      {{ form.lat }}
+      {{ form.lon }}
+      <div class="form-group form-inline"> {{ form.first_name }} {{ form.last_name }} </div>
+      <div class="form-group"> {{ form.hometown_name }} </div>
+      <div class="form-group"> {{ form.text }} </div>
+
+    <input type="submit" class="btn btn-default" value="Save" />
 
 
   </div>

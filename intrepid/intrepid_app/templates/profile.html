@@ -13,12 +13,17 @@
 	var map;
 
 	function initialize() {
+	    var loc = new google.maps.LatLng({{user.profile.hometown.lat}},{{user.profile.hometown.lon}})
 		var mapOptions = {
-		  center: new google.maps.LatLng(0,0),
+		  center: loc,
           zoom: 3,
           mapTypeId: google.maps.MapTypeId.TERRAIN
         };
         map = new google.maps.Map($("#map-canvas")[0], mapOptions);
+		var marker = new google.maps.Marker({	
+				position: loc,
+			});
+		marker.setMap(map);
     };
 
 	$( window ).load(initialize);
@@ -41,7 +46,7 @@
   	{% else %}
   	<h2 class="title-text">{{user.username}}</h2>
   	{% endif %}
-  	{% if user.profile.hometown %}
+  	{% if user.profile.hometown.name %}
   	<p class="location-text">{{user.profile.hometown.name}}</p>
   	{% else %}
   	<p class="location-text">&nbsp;</p>
