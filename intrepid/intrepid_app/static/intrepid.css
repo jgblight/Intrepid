@@ -1,33 +1,173 @@
-	  html { height: 100% }
-	  body { height: 100%; 
-	  		margin: 0; 
-	  		padding: 0 }
-	  .width-fill { width : 100%;}
+	html { 
+		height: 100%
+		}
 
-	  .fill {	height : 100%;
-	  			margin : 0px;
-	  			padding : 0px; }
-	  
-	  .insert-holder { margin-top : 10px;
-	  					display : inline-block;
-	  					margin-left : auto;
-	  					margin-right : auto;
-	  					padding : 0px;
-	  					}
-	  .insert-image { 	max-width : 200px;}
+	body { 
+		height: 100%; 
+		margin: 0; 
+		padding: 0
+		}
+
+	.width-fill { 
+		width : 100% ;
+		}
+
+	.fill {	
+		height : 100% ;
+		margin : 0px ;
+		padding : 0px ; 
+		}
+
+	.info-div { 	
+		text-align: center ;
+		background-color: #FFFFFF;
+		border-left : 1px solid #CCCCCC;
+		overflow: auto ;
+		}
+
+	.header-div {
+		margin : 15px;
+		}
+
+	.insert-holder { 
+		margin-top : 10px ;
+		display : inline-block ;
+		margin-left : auto ;
+		margin-right : auto ;
+		padding : 0px ;
+		}
+
+	.insert-image { 	
+		max-width : 200px ;
+		border-radius : 10px ;
+		border : 3px solid white;
+		}
+
+	.title-text {
+		font-family : 'Josefin Slab', serif ;
+		color : #2A2C31 ;
+		font-size :  30px;
+		margin: 2px ;
+	}
+
+	.subtitle {
+		font-family : 'Josefin Slab', serif ;
+		color : #2A2C31 ;
+		font-size :  20px;
+		margin-bottom : 2px ;
+	}
+
+	.minor-text {
+		font-family : 'Raleway', sans-serif ;
+		color : #2A2C31 ;
+		font-size: 9pt ;
+		margin : 4px;
+	}
+
+	.blurb {
+		font-family : 'Raleway', sans-serif ;
+		color : #666666 ;
+		font-size: 11pt ;
+		text-align : center ;  
+		margin-left : 12% ; 
+		margin-right : 12% ;
+		margin-bottom : 5px ; 
+		padding : 5px ;
+	}
+
+	.trip-list {
+		text-align : left ;  
+		margin-left : 10% ; 
+		margin-right : 10% ;
+		padding : 0px ;
+	}
+
+	.trip-item {
+		margin : 0px ;
+		margin-bottom: 3px;
+		padding : 0px ;
+		padding-bottom: 5px ;
+		border : 1px solid #CCCCCC;
+	}
 
 
-	  #map-canvas { height : 100% }
+	.trip-item:hover {
+		background-color : #EEEEEE ;
+	}
 
-	  #trip-image { width : 100%;}
-	  #trip-image-div { height : 30%;
-	  					overflow : hidden;}
-	  #trip-div { 	height : 70%;
-	  				background-color : #EEEEEE;}
-	  #pin-div  { height : 70%;
-	  				display: none;
-	  				background-color : #CCCCCC;}
+	.trip-link {
+		font-family : 'Raleway', sans-serif ;
+		color : #2A2C31 ;
+		font-size: 13pt ;
+		margin-left: 10px ;
+		margin-top: 3px;
+	}
 
-	  #profile-div { text-align: center}
+	.edit-button {
+		position: fixed ;
+		bottom : 0px ;
+		min-width : 50px ;
+		right : 50px ;
+		background-color: #CF4647;
+		border-top-left-radius: 5px;
+		border-top-right-radius: 5px;
+		padding : 4px;
+		color : #FFFFFF;
+		font-family : 'Raleway', sans-serif ;
+		font-size : 11pt;
+	}
+
+	.edit-button:hover {
+		padding-bottom: 8px;
+	}
+
+	.link-image {
+		width : 100%;
+	}
+
+	.link-image-div {
+		height : 30px ;
+		overflow : hidden ;
+	}
+
+	#map-canvas { 
+		height : 100% ; 
+		}
+
+	#trip-image { 
+		width : 100% ;
+		}
+
+	#trip-image-div { 
+		overflow : hidden ;
+		}
+
+	#trip-pane {
+
+	}
+
+	#trip-info {
+		height : 100%;
+	}
 
 
+	#pin-info  { 
+		height : 100%;
+		display: none;
+		}
+
+	.show-pin-image {
+		height : 10% ;
+	}
+
+	.show-trip-image {
+		height : 30% ;
+	}
+
+	.show-pin-pane {
+		height : 90% ;
+	}
+
+	.show-trip-pane {
+		height : 70% ;
+	}

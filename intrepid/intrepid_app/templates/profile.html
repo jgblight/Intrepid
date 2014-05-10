@@ -3,27 +3,43 @@
 <head>
 	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
 	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
-
+  <link href='http://fonts.googleapis.com/css?family=Josefin+Slab:400,600|Raleway' rel='stylesheet' type='text/css'>
 	<link rel="stylesheet" href="/static/intrepid.css">
 	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 	<script type="text/javascript"
 	      src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDml8K6lGP_FoE7gH8ffhCAdN8Dkltf1as&libraries=places&sensor=false">
     </script>
     <script type="text/javascript">
+
 	var map;
 
 	function initialize() {
-	    var loc = new google.maps.LatLng({{user.profile.hometown.lat}},{{user.profile.hometown.lon}})
+      {% if user.profile.hometown.name %}
+        var loc = new google.maps.LatLng({{user.profile.hometown.lat}},{{user.profile.hometown.lon}});
+      {% else %}
+        var loc = new google.maps.LatLng(0,0);
+      {% endif %}
+
 		var mapOptions = {
-		  center: loc,
+		      center: loc,
           zoom: 3,
-          mapTypeId: google.maps.MapTypeId.TERRAIN
+          mapTypeId: google.maps.MapTypeId.TERRAIN,
+          mapTypeControl: false,
+          panControl: true,
+          zoomControl: true,
+          streetViewControl: false
         };
         map = new google.maps.Map($("#map-canvas")[0], mapOptions);
 		var marker = new google.maps.Marker({	
 				position: loc,
 			});
 		marker.setMap(map);
+
+
+    $(".link-item").click(function(){
+     window.location=$(this).attr("href"); 
+     return false;
+    });
     };
 
 	$( window ).load(initialize);
@@ -37,21 +53,39 @@
   <div class="col-xs-6 col-sm-8 fill">
 	<div id="map-canvas"></div>
   </div>
-  <div class="col-xs-6 col-sm-4 fill" id="profile-div">
+  <div class="col-xs-6 col-sm-4 fill info-div">
   	<div class="insert-holder">
   		<img class="insert-image" src="http://placekitten.com/500/500">
   	</div>
+    <div class="header-div">
   	{% if user.first_name %}
   	<h2 class="title-text">{{user.first_name}} {{user.last_name}}</h2>
   	{% else %}
   	<h2 class="title-text">{{user.username}}</h2>
   	{% endif %}
   	{% if user.profile.hometown.name %}
-  	<p class="location-text">{{user.profile.hometown.name}}</p>
+  	<p class="minor-text">{{user.profile.hometown.name}}</p>
   	{% else %}
-  	<p class="location-text">&nbsp;</p>
+  	<p class="minor-text">&nbsp;</p>
   	{% endif %}
-  	<p class="blurb"> {{user.profile.text}} </p>
+    </div>
+  	<div class="blurb"> {{user.profile.text}} </div>
+
+    {% if user.trip_set.all %}
+  	<div class="trip-list">
+    <h3 class="subtitle">Trips</h3>
+  	{% for trip in user.trip_set.all %}
+  		<div class="trip-item link-item" href="/trip/{{trip.id}}">
+        <div class="link-image-div"> <img class="link-image" src="http://placekitten.com/500/300"></div>
+        <p class="trip-link">{{trip.name}}</a>
+        </div>
+  	{% endfor %}
+  	</div>
+    {% endif %}
+
+    {% if edit %}
+    <div class="edit-button link-item" href="/profile/{{user.username}}/edit"> Edit </div>
+    {% endif %}
 
 
   </div>

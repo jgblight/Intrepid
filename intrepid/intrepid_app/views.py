@@ -86,7 +86,7 @@ def new_trip_view(request):
 
             new_trip = Trip(name=name,text=description,user=request.user)
             new_trip.save()
-            return redirect(index_view) #TODO: should redirect to trip page
+            return redirect(new_post_view) #TODO: should redirect to trip page
     else:
         form = TripForm()
     return render(request, 'new_trip.html', {
@@ -135,9 +135,7 @@ def new_post_view(request):
 
 @login_required
 def index_view(request):
-    return render(request, 'index.html', {
-        'user': request.user,
-    })
+    redirect('/profile/' + str(request.user.username))
 
 def trip_view(request,trip_id):
     trip = get_object_or_404(Trip, pk=trip_id)
@@ -145,11 +143,12 @@ def trip_view(request,trip_id):
 
     center_lat = 0.0;
     center_lon = 0.0;
-    for p in pins:
-        center_lat += p.location.lat
-        center_lon += p.location.lon
-    center_lat /= len(pins)
-    center_lon /= len(pins)
+    if len(pins):
+        for p in pins:
+            center_lat += p.location.lat
+            center_lon += p.location.lon
+        center_lat /= len(pins)
+        center_lon /= len(pins)
 
     return render(request, 'trip.html', {
         'trip' : trip,
@@ -160,7 +159,8 @@ def trip_view(request,trip_id):
 
 def profile_view(request,username):
     return render(request, 'profile.html', {
-        'user': User.objects.get(username=username),
+        'user' : User.objects.get(username=username),
+        'edit' : username == request.user.username
     })
 
 class EditProfileForm(forms.Form):

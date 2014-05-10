@@ -3,7 +3,8 @@
 <html>
 <head>
 	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
-	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">  
+	<link href='http://fonts.googleapis.com/css?family=Josefin+Slab:400,600|Raleway' rel='stylesheet' type='text/css'>
 
 	<link rel="stylesheet" href="/static/intrepid.css">
 	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
@@ -13,20 +14,43 @@
     <script type="text/javascript">
 	var map;
 
-	function pinListener(info) {
-		var pin_div = $("#pin-div");
-		console.log(pin_div)
-		pin_div.html(info.name);
-		$("#trip-div").hide();
-		pin_div.show();
+	function showPin() {
+		$("#trip-pane").removeClass("show-trip-pane").addClass("show-pin-pane");
+		$("#trip-image-div").removeClass("show-trip-image").addClass("show-pin-image");
+		$("#trip-info").hide();
+		$("#pin-info").show();
+	};
 
+	function showTrip() {
+		$("#trip-pane").removeClass("show-pin-pane").addClass("show-trip-pane");
+		$("#trip-image-div").removeClass("show-pin-image").addClass("show-trip-image");
+		$("#pin-info").hide();
+		$("#trip-info").show();
+		map.setCenter(new google.maps.LatLng({{center_lat}}, {{center_lon}}));
+		map.setZoom(5);
+	}
+
+	function pinListener(info) {
+		var pin_div = $("#pin-info");
+		console.log(pin_div)
+		pin_div.find("#pin-title").html(info.name);
+		pin_div.find("#pin-location").html(info.location);
+		pin_div.find("#pin-date").html(info.date);
+		pin_div.find("#pin-blurb").html(info.blurb);
+		map.setCenter(new google.maps.LatLng(info.lat, info.lon));
+		map.setZoom(10);
+		showPin();
 	};
 
 	function initialize() {
 		var mapOptions = {
 		  center: new google.maps.LatLng({{center_lat}}, {{center_lon}}),
           zoom: 5,
-          mapTypeId: google.maps.MapTypeId.TERRAIN
+          mapTypeId: google.maps.MapTypeId.TERRAIN,
+          mapTypeControl: false,
+          panControl: true,
+          zoomControl: true,
+          streetViewControl: false
         };
         map = new google.maps.Map($("#map-canvas")[0], mapOptions);
 
@@ -45,7 +69,11 @@
 			google.maps.event.addListener(marker, 'click', function() {
 				var info = { 
 					name : "{{ p.name }}",
-					description : "{{ p.description }}"
+					blurb : "{{ p.text }}",
+					location : "{{ p.location.name }}",
+					date : "{{ p.pin_date.date }}",
+					lat : {{p.location.lat}},
+					lon : {{p.location.lon}}
 				};
 				pinListener(info);
 			});
@@ -58,6 +86,14 @@
 			strokeWeight: 2
 		});
 		poly.setMap(map);
+
+		showTrip();
+		$("#trip-name").click(showTrip);
+
+		$(".link-item").click(function(){
+     	window.location=$(this).attr("href"); 
+     	return false;
+    });
 	};
 
 	$( window ).load(initialize);
@@ -68,13 +104,39 @@
 
 <div class="container fill width-fill">
 <div class="row fill">
-  <div class="col-sm-6 col-md-6 fill">
+  <div class="col-sm-6 col-md-8 fill">
 	<div id="map-canvas"></div>
   </div>
-  <div class="col-sm-6 col-md-6 fill">
+  <div class="col-sm-6 col-md-4 fill info-div">
   	<div id="trip-image-div"> <img id="trip-image" src="http://placekitten.com/500/300" /></div> 
-  	<div id="trip-div">{{trip.name}}</div>
-  	<div id="pin-div"></div>
+  	<div id="trip-pane">
+	  	<div id="trip-info">
+	  		<div class="header-div">
+	  		{% if trip.user.first_name %}
+		  	<p class="minor-text link-item" href="/profile/{{trip.user.username}}">{{trip.user.first_name}} {{trip.user.last_name}}</p>
+		  	{% else %}
+		  	<p class="minor-text link-item" href="/profile/{{trip.user.username}}">{{trip.user.username}}</p>
+		  	{% endif %}
+	  		<h2 class="title-text">{{trip.name}}</h2>
+	  		<p class="minor-text"> Date - Date</p>
+	  		</div>
+	  		<div class="blurb">{{trip.text}}</div>
+	  	</div>
+	  	<div id="pin-info">
+	  		<div class="header-div">
+	  		<p class="subtitle" id="trip-name"> {{trip.name}} </p>
+	  		<h2 class="title-text" id="pin-title"></h2>
+	  		<p class="minor-text" id="pin-location"> </p>
+	  		<p class="minor-text" id="pin-date"> </p>
+	  		</div>
+
+	  		<div class="insert-holder">
+  			<img class="insert-image" src="http://placekitten.com/500/500">
+  			</div>
+
+  			<div class="blurb" id="pin-blurb"> </div>
+	  	</div>
+  	</div>
   </div>
 </div>
 </div>
