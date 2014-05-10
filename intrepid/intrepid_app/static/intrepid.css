@@ -1,11 +1,11 @@
 	html { 
-		height: 100%
+		height: 100% ;
 		}
 
 	body { 
 		height: 100%; 
-		margin: 0; 
-		padding: 0
+		margin: 0 ; 
+		padding: 0 ;
 		}
 
 	.width-fill { 
@@ -14,9 +14,22 @@
 
 	.fill {	
 		height : 100% ;
-		margin : 0px ;
-		padding : 0px ; 
+		margin : 0 ;
+		padding : 0 ;
 		}
+
+	.main {
+		position: absolute;
+    	top : 40px ;
+    	bottom : 0px ;
+		margin : 0 ;
+		padding : 0 ;
+	}
+
+	.header {
+		background-color: #5A2E2E ;
+		height : 40px ; 
+	}
 
 	.info-div { 	
 		text-align: center ;
@@ -48,6 +61,14 @@
 		color : #2A2C31 ;
 		font-size :  30px;
 		margin: 2px ;
+	}
+
+	.logo {
+		font-family : 'Josefin Slab', serif ;
+		color : #FFFFFF ;
+		font-size :  30px;
+		margin: 5px ;
+
 	}
 
 	.subtitle {

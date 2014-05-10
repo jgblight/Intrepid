@@ -1,24 +1,11 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
-	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
-  <link href='http://fonts.googleapis.com/css?family=Josefin+Slab:400,600|Raleway' rel='stylesheet' type='text/css'>
-	<link rel="stylesheet" href="/static/intrepid.css">
-	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
-	<script type="text/javascript"
-	      src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDml8K6lGP_FoE7gH8ffhCAdN8Dkltf1as&libraries=places&sensor=false">
-    </script>
-    <script type="text/javascript">
+{% extends "map_base.html" %}
 
-	var map;
-
-	function initialize() {
-      {% if user.profile.hometown.name %}
-        var loc = new google.maps.LatLng({{user.profile.hometown.lat}},{{user.profile.hometown.lon}});
-      {% else %}
-        var loc = new google.maps.LatLng(0,0);
-      {% endif %}
+{% block initialize_map %}
+    {% if user.profile.hometown.name %}
+      var loc = new google.maps.LatLng({{user.profile.hometown.lat}},{{user.profile.hometown.lon}});
+    {% else %}
+      var loc = new google.maps.LatLng(0,0);
+    {% endif %}
 
 		var mapOptions = {
 		      center: loc,
@@ -34,26 +21,9 @@
 				position: loc,
 			});
 		marker.setMap(map);
+{% endblock %}
 
-
-    $(".link-item").click(function(){
-     window.location=$(this).attr("href"); 
-     return false;
-    });
-    };
-
-	$( window ).load(initialize);
-	</script>
-
-</head>
-<body>
-
-<div class="container fill width-fill">
-<div class="row fill">
-  <div class="col-xs-6 col-sm-8 fill">
-	<div id="map-canvas"></div>
-  </div>
-  <div class="col-xs-6 col-sm-4 fill info-div">
+{% block content %}
   	<div class="insert-holder">
   		<img class="insert-image" src="http://placekitten.com/500/500">
   	</div>
@@ -87,10 +57,4 @@
     <div class="edit-button link-item" href="/profile/{{user.username}}/edit"> Edit </div>
     {% endif %}
 
-
-  </div>
-</div>
-</div>
-
-</body>
-</html>
+{% endblock %}

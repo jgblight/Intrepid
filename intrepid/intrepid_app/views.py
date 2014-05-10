@@ -135,7 +135,10 @@ def new_post_view(request):
 
 @login_required
 def index_view(request):
-    redirect('/profile/' + str(request.user.username))
+    if request.user.is_authenticated():
+        return redirect('/profile/' + str(request.user.username))
+    else:
+        return redirect('/login')
 
 def trip_view(request,trip_id):
     trip = get_object_or_404(Trip, pk=trip_id)
