@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+  <link href='http://fonts.googleapis.com/css?family=Josefin+Slab:400,600|Raleway' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="/static/intrepid.css">
+	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+	<script type="text/javascript"
+	      src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDml8K6lGP_FoE7gH8ffhCAdN8Dkltf1as&libraries=places&sensor=false">
+  </script>
+  <script type="text/javascript">
+  	var map;
+
+    {% block script_functions %}{% endblock %}      
+
+  	function initialize() {
+      {% block initialize_map %}
+  		var mapOptions = {
+  		      center: new google.maps.LatLng(0,0),
+            zoom: 3,
+            mapTypeId: google.maps.MapTypeId.TERRAIN,
+            mapTypeControl: false,
+            panControl: true,
+            zoomControl: true,
+            streetViewControl: false
+          };
+      map = new google.maps.Map($("#map-canvas")[0], mapOptions);
+      {% endblock %}
+
+      $(".link-item").click(function(){
+       window.location=$(this).attr("href"); 
+       return false;
+      });
+      
+      {% block initialize_script %}{% endblock %}
+
+      };
+
+  	$( window ).load(initialize);
+  </script>
+
+</head>
+<body>
+
+<div class="container fill width-fill">
+<div class="row header">
+<div class="col-xs-3 col-sm-3">
+  <h2 class="logo link-item" href="/"> Intrepid </h2>
+</div>
+</div>
+<div class="row width-fill main">
+  <div class="col-xs-6 col-sm-8 fill">
+	<div id="map-canvas"></div>
+  </div>
+  <div class="col-xs-6 col-sm-4 fill info-div">
+    {% block content %}{% endblock %}
+  </div>
+</div>
+</div>
+
+</body>
+</html>
