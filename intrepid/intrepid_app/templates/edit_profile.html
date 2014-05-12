@@ -13,9 +13,16 @@
       {% endif %}
 
       var searchbox = new google.maps.places.Autocomplete(document.getElementById("id_hometown_name"));
+      searchbox.setTypes(['geocode']);
 
       {% if user.profile.hometown %}
-      $("#id_hometown_name").val("{{user.profile.hometown.name}}")
+        $("#id_hometown_name").val("{{user.profile.hometown.name}}")
+        var loc = new google.maps.LatLng({{user.profile.hometown.lat}},{{user.profile.hometown.lon}});
+        var marker = new google.maps.Marker({ 
+          position: loc,
+        });
+        marker.setMap(map);
+        map.setCenter(loc);
       {% else %}
       $("#id_hometown_name").attr("placeholder","Enter your hometown..")
       {% endif %}
@@ -45,10 +52,11 @@
   	<div class="insert-holder">
   		<img class="insert-image" src="http://placekitten.com/500/500">
   	</div>
-  	<form action="/profile/{{user.username}}/edit" method="post">{% csrf_token %}
+  	<form action="/profile/{{user.username}}/edit" enctype="multipart/form-data" method="post">{% csrf_token %}
       {{ form.non_field_errors }}
       {{ form.lat }}
       {{ form.lon }}
+      <div class="form-group"> {{ form.profile_pic.errors }}{{ form.profile_pic }} </div>
       <div class="form-group form-inline"> {{ form.first_name }} {{ form.last_name }} </div>
       <div class="form-group"> {{ form.hometown_name }} </div>
       <div class="form-group"> {{ form.text }} </div>

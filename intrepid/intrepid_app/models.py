@@ -1,8 +1,23 @@
 from django.db import models
 from django.db.models.signals import post_save
 from django.contrib.auth.models import User
+from imagekit import ImageSpec, register
+from imagekit.models import ImageSpecField
+from imagekit.processors import Crop
+from imagekit.utils import get_field_info
 
 # Create your models here.
+
+class Profile_Image(ImageSpec):
+    format = 'JPEG'
+    options = {'quality': 60}
+
+    @property 
+    def processors(self):
+        model, field_name = get_field_info(self.source)
+        return [Crop(width=model.width,height=model.width,x=model.x,y=model.y)]
+
+register.generator('profile_image', Profile_Image)
 
 class Location(models.Model):
     lat = models.FloatField()
@@ -11,6 +26,11 @@ class Location(models.Model):
 
 class Profile(models.Model):
     user = models.OneToOneField(User)
+    image_file = models.ImageField(upload_to="profile",blank=True,null=True)
+    image = ImageSpecField(source='image_file',id='profile_image')
+    x = models.IntegerField(default=0)
+    y = models.IntegerField(default=0)
+    width = models.IntegerField(default=500)
     hometown = models.ForeignKey(Location,blank=True,null=True)
     text = models.TextField(blank=True)
     created = models.DateTimeField(auto_now=True)

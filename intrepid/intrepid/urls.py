@@ -2,6 +2,8 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 admin.autodiscover()
 import django.contrib.auth
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
@@ -18,3 +20,5 @@ urlpatterns += patterns('intrepid_app.views',
 	url(r'^trip/new$','new_trip_view'),
 	url(r'^trip/(?P<trip_id>[0-9]+)$','trip_view'),
 	url(r'^post/new$','new_post_view'))
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

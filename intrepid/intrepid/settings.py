@@ -37,6 +37,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'bootstrapform',
+    'imagekit',
     'intrepid_app'
 )
 
@@ -84,5 +85,8 @@ LOGIN_REDIRECT_URL = "/"
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
 STATIC_URL = '/static/'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
 
 AUTH_PROFILE_MODULE = 'intrepid_app.Profile'

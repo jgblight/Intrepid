@@ -167,6 +167,7 @@ def profile_view(request,username):
     })
 
 class EditProfileForm(forms.Form):
+    profile_pic  = forms.ImageField(required=False)
     first_name = forms.CharField(required=False)
     last_name = forms.CharField(required=False)
     hometown_name = forms.CharField(required=False)
@@ -179,7 +180,7 @@ def edit_profile_view(request,username):
     if not username == request.user.username:
         return redirect("/profile/" + username)
     if request.method == "POST":
-        form = EditProfileForm(request.POST)
+        form = EditProfileForm(request.POST,request.FILES)
         if form.is_valid():
             user = User.objects.get(username=username)
             profile = user.get_profile()
@@ -200,6 +201,9 @@ def edit_profile_view(request,username):
 
             if form.cleaned_data['text']:
                 profile.text = form.cleaned_data['text']
+
+            if request.FILES.has_key('profile_pic'):
+                profile.image_file = request.FILES['profile_pic']
 
             profile.save()
             user.save()

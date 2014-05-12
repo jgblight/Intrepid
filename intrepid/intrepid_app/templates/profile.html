@@ -17,15 +17,17 @@
           streetViewControl: false
         };
         map = new google.maps.Map($("#map-canvas")[0], mapOptions);
+    {% if user.profile.hometown.name %}
 		var marker = new google.maps.Marker({	
 				position: loc,
 			});
 		marker.setMap(map);
+    {% endif %}
 {% endblock %}
 
 {% block content %}
   	<div class="insert-holder">
-  		<img class="insert-image" src="http://placekitten.com/500/500">
+  		<img class="insert-image" src="{{user.profile.image.url}}">
   	</div>
     <div class="header-div">
   	{% if user.first_name %}
