@@ -1,25 +1,6 @@
-{% load bootstrap %}
-<!DOCTYPE html>
-<html>
-<head>
-	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
-	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+{% extends "map_base.html" %}
 
-	<link rel="stylesheet" href="/static/intrepid.css">
-	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
-	<script type="text/javascript"
-	      src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDml8K6lGP_FoE7gH8ffhCAdN8Dkltf1as&libraries=places&sensor=false">
-    </script>
-    <script type="text/javascript">
-	var map;
-
-	function initialize() {
-		  var mapOptions = {
-		  center: new google.maps.LatLng(0,0),
-          zoom: 5,
-          mapTypeId: google.maps.MapTypeId.TERRAIN
-        };
-      map = new google.maps.Map($("#map-canvas")[0], mapOptions);
+  {% block initialize_script %}
       $("input").addClass("form-control")
       $("textarea").addClass("form-control")
 
@@ -55,22 +36,12 @@
           map: map
         });
         map.setCenter(marker.getPosition());
+
       }); 
 
-    };
+  {% endblock %}
 
-	$( window ).load(initialize);
-	</script>
-
-</head>
-<body>
-
-<div class="container fill width-fill">
-<div class="row fill">
-  <div class="col-xs-6 col-sm-8 fill">
-	<div id="map-canvas"></div>
-  </div>
-  <div class="col-xs-6 col-sm-4 fill info-div" id="profile-div">
+  {% block content %}
   	<div class="insert-holder">
   		<img class="insert-image" src="http://placekitten.com/500/500">
   	</div>
@@ -84,9 +55,4 @@
 
     <input type="submit" class="btn btn-default" value="Save" />
 
-
-  </div>
-</div>
-</div>
-
-</body>
+  {% endblock %}

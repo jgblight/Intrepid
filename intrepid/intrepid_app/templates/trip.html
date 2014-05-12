@@ -1,19 +1,6 @@
-{% load bootstrap %}
-<!DOCTYPE html>
-<html>
-<head>
-	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
-	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">  
-	<link href='http://fonts.googleapis.com/css?family=Josefin+Slab:400,600|Raleway' rel='stylesheet' type='text/css'>
+{% extends "map_base.html" %}
 
-	<link rel="stylesheet" href="/static/intrepid.css">
-	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
-	<script type="text/javascript"
-	      src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDml8K6lGP_FoE7gH8ffhCAdN8Dkltf1as&libraries=places&sensor=false">
-    </script>
-    <script type="text/javascript">
-	var map;
-
+{% block script_functions %}
 	function showPin() {
 		$("#trip-pane").removeClass("show-trip-pane").addClass("show-pin-pane");
 		$("#trip-image-div").removeClass("show-trip-image").addClass("show-pin-image");
@@ -42,7 +29,9 @@
 		showPin();
 	};
 
-	function initialize() {
+{% endblock %}
+
+{% block initialize_map %}
 		var mapOptions = {
 		  center: new google.maps.LatLng({{center_lat}}, {{center_lon}}),
           zoom: 5,
@@ -53,6 +42,9 @@
           streetViewControl: false
         };
         map = new google.maps.Map($("#map-canvas")[0], mapOptions);
+{% endblock %}
+
+{% block initialize_script %}
 
         var loc,marker;
         var pathArr = [];
@@ -89,25 +81,9 @@
 
 		showTrip();
 		$("#trip-name").click(showTrip);
+{% endblock %}
 
-		$(".link-item").click(function(){
-     	window.location=$(this).attr("href"); 
-     	return false;
-    });
-	};
-
-	$( window ).load(initialize);
-	</script>
-
-</head>
-<body>
-
-<div class="container fill width-fill">
-<div class="row fill">
-  <div class="col-sm-6 col-md-8 fill">
-	<div id="map-canvas"></div>
-  </div>
-  <div class="col-sm-6 col-md-4 fill info-div">
+{% block content %}
   	<div id="trip-image-div"> <img id="trip-image" src="http://placekitten.com/500/300" /></div> 
   	<div id="trip-pane">
 	  	<div id="trip-info">
@@ -137,9 +113,5 @@
   			<div class="blurb" id="pin-blurb"> </div>
 	  	</div>
   	</div>
-  </div>
-</div>
-</div>
 
-</body>
-</html>
+{% endblock %}
