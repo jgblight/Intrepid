@@ -1,4 +1,3 @@
-{% load bootstrap %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -7,9 +6,10 @@
   <link href='http://fonts.googleapis.com/css?family=Josefin+Slab:400,600|Raleway' rel='stylesheet' type='text/css'>
   <link rel="stylesheet" href="/static/jquery.drag-n-crop.css">
 	<link rel="stylesheet" href="/static/intrepid.css">
-	
+
   <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
   <script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+  <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/3.0.4/jquery.imagesloaded.min.js"></script>
   <script src="/static/scale.fix.js"></script>
   <script src='/static/jquery.drag-n-crop.js'></script> 
@@ -39,6 +39,8 @@
        window.location=$(this).attr("href"); 
        return false;
       });
+
+      $(".dropdown-toggle").dropdown();
       
       {% block initialize_script %}{% endblock %}
 
@@ -52,9 +54,23 @@
 
 <div class="container fill width-fill">
 <div class="row header">
-<div class="col-xs-3 col-sm-3">
-  <h2 class="logo link-item" href="/"> Intrepid </h2>
-</div>
+  <div class="col-xs-2 col-sm-2">
+    <h2 class="logo link-item" href="/"> Intrepid </h2>
+  </div>
+
+  <div class="col-xs-2 col-xs-offset-8 col-sm-2 col-sm-offset-8 header-right">
+  {% if user.is_authenticated %}
+    <div id="dLabel" class="header-icon dropdown-toggle" data-toggle="dropdown">
+      <img class="insert-image"  src="/static/black_pin.png" />
+    </div>
+    <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+      {% if user.trip_set.all %}
+      <li> <a class="drop-link" href="/post/new"> New Post </a> </li>
+      {% endif %}
+      <li> <a class="drop-link" href="/trip/new"> New Trip </a> </li>
+    </ul>
+  {% endif %}
+  </div>
 </div>
 <div class="row width-fill main">
   <div class="col-xs-6 col-sm-8 fill">

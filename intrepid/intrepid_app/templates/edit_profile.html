@@ -90,7 +90,7 @@
       {% if user.profile.image %}
       <img class="insert-image" src="{{user.profile.image.url}}" id="photo"/>
       {% else %}
-      <img class="insert-image" src="http://placekitten.com/500/300" id="photo"/>
+      <img class="insert-image" src="http://placekitten.com/500/500" id="photo"/>
       {% endif %}
     </div>
   	<form action="/profile/{{user.username}}/edit" enctype="multipart/form-data" method="post">{% csrf_token %}

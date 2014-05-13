@@ -162,7 +162,7 @@ def trip_view(request,trip_id):
 
 def profile_view(request,username):
     return render(request, 'profile.html', {
-        'user' : User.objects.get(username=username),
+        'profile_user' : User.objects.get(username=username),
         'edit' : username == request.user.username
     })
 
@@ -222,7 +222,7 @@ def edit_profile_view(request,username):
     else:
         form = EditProfileForm()
     return render(request, 'edit_profile.html', {
-        'user' : User.objects.get(username=username),
+        'profile_user' : User.objects.get(username=username),
         'form' : form 
     })
 

@@ -1,8 +1,8 @@
 {% extends "map_base.html" %}
 
 {% block initialize_map %}
-    {% if user.profile.hometown.name %}
-      var loc = new google.maps.LatLng({{user.profile.hometown.lat}},{{user.profile.hometown.lon}});
+    {% if profile_user.profile.hometown.name %}
+      var loc = new google.maps.LatLng({{profile_user.profile.hometown.lat}},{{profile_user.profile.hometown.lon}});
     {% else %}
       var loc = new google.maps.LatLng(0,0);
     {% endif %}
@@ -17,7 +17,7 @@
           streetViewControl: false
         };
         map = new google.maps.Map($("#map-canvas")[0], mapOptions);
-    {% if user.profile.hometown.name %}
+    {% if profile_user.profile.hometown.name %}
 		var marker = new google.maps.Marker({	
 				position: loc,
 			});
@@ -27,30 +27,30 @@
 
 {% block content %}
   	<div class="insert-holder">
-      {% if user.profile.image %}
-      <img class="insert-image" src="{{user.profile.image.url}}" />
+      {% if profile_user.profile.image %}
+      <img class="insert-image" src="{{profile_user.profile.image.url}}" />
       {% else %}
       <img class="insert-image" src="http://placekitten.com/500/500"/>
       {% endif %}
   	</div>
     <div class="header-div">
-  	{% if user.first_name %}
-  	<h2 class="title-text">{{user.first_name}} {{user.last_name}}</h2>
+  	{% if profile_user.first_name %}
+  	<h2 class="title-text">{{profile_user.first_name}} {{profile_user.last_name}}</h2>
   	{% else %}
-  	<h2 class="title-text">{{user.username}}</h2>
+  	<h2 class="title-text">{{profile_user.username}}</h2>
   	{% endif %}
-  	{% if user.profile.hometown.name %}
-  	<p class="minor-text">{{user.profile.hometown.name}}</p>
+  	{% if profile_user.profile.hometown.name %}
+  	<p class="minor-text">{{profile_user.profile.hometown.name}}</p>
   	{% else %}
   	<p class="minor-text">&nbsp;</p>
   	{% endif %}
     </div>
-  	<div class="blurb"> {{user.profile.text}} </div>
+  	<div class="blurb"> {{profile_user.profile.text}} </div>
 
-    {% if user.trip_set.all %}
+    {% if profile_user.trip_set.all %}
   	<div class="trip-list">
     <h3 class="subtitle">Trips</h3>
-  	{% for trip in user.trip_set.all %}
+  	{% for trip in profile_user.trip_set.all %}
   		<div class="trip-item link-item" href="/trip/{{trip.id}}">
         <div class="link-image-div"> <img class="link-image" src="http://placekitten.com/500/300"></div>
         <p class="trip-link">{{trip.name}}</a>
@@ -60,7 +60,7 @@
     {% endif %}
 
     {% if edit %}
-    <div class="edit-button link-item" href="/profile/{{user.username}}/edit"> Edit </div>
+    <div class="edit-button link-item" href="/profile/{{profile_user.username}}/edit"> Edit </div>
     {% endif %}
 
 {% endblock %}
