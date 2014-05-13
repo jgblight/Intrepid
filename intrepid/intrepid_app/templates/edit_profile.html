@@ -1,8 +1,29 @@
 {% extends "map_base.html" %}
 
+  {% block script_functions %}
+    function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                
+                reader.onload = function (e) {
+                    $('#photo').attr('src', e.target.result);
+                    $('#photo').removeClass('insert-image');
+                    $('#photo').dragncrop('destroy');
+                    $('#photo').dragncrop({ centered : true });
+                }
+                
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+  {% endblock %}
+
   {% block initialize_script %}
       $("input").addClass("form-control")
       $("textarea").addClass("form-control")
+    
+      $("#id_profile_pic").change(function(){
+          readURL(this);
+      });
 
       {% if user.first_name %}
       $("#id_first_name").val("{{user.first_name}}")
@@ -46,12 +67,18 @@
 
       }); 
 
+      $('#photo').dragncrop();
+
   {% endblock %}
 
   {% block content %}
   	<div class="insert-holder">
-  		<img class="insert-image" src="http://placekitten.com/500/500">
-  	</div>
+      {% if user.profile.image %}
+      <img class="insert-image" src="{{user.profile.image.url}}" id="photo"/>
+      {% else %}
+      <img class="insert-image" src="http://placekitten.com/500/300" id="photo"/>
+      {% endif %}
+    </div>
   	<form action="/profile/{{user.username}}/edit" enctype="multipart/form-data" method="post">{% csrf_token %}
       {{ form.non_field_errors }}
       {{ form.lat }}

@@ -27,7 +27,11 @@
 
 {% block content %}
   	<div class="insert-holder">
-  		<img class="insert-image" src="{{user.profile.image.url}}">
+      {% if user.profile.image %}
+      <img class="insert-image" src="{{user.profile.image.url}}" />
+      {% else %}
+      <img class="insert-image" src="http://placekitten.com/500/500"/>
+      {% endif %}
   	</div>
     <div class="header-div">
   	{% if user.first_name %}
