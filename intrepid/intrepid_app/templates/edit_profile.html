@@ -6,10 +6,24 @@
                 var reader = new FileReader();
                 
                 reader.onload = function (e) {
-                    $('#photo').attr('src', e.target.result);
-                    $('#photo').removeClass('insert-image');
-                    $('#photo').dragncrop('destroy');
-                    $('#photo').dragncrop({ centered : true });
+                    var photo = $('#photo'); 
+                    photo.attr('src', e.target.result);
+                    photo.removeClass('insert-image');
+                    photo.dragncrop('destroy');
+                    photo.dragncrop({ 
+                        centered : true ,
+                        instruction : true ,
+                        stop: function(e,pos) {
+                          $("#id_image_x").val(pos.dimension[0]);
+                          $("#id_image_y").val(pos.dimension[1]);
+                        }                       
+                     });
+                    photo.imagesLoaded().done(function(){
+                      var pos = photo.dragncrop("getPosition");
+                      $("#id_image_x").val(pos.dimension[0]);
+                      $("#id_image_y").val(pos.dimension[1]);
+                      
+                    }); 
                 }
                 
                 reader.readAsDataURL(input.files[0]);
@@ -21,7 +35,7 @@
       $("input").addClass("form-control")
       $("textarea").addClass("form-control")
     
-      $("#id_profile_pic").change(function(){
+      $("#id_image").change(function(){
           readURL(this);
       });
 
@@ -81,9 +95,11 @@
     </div>
   	<form action="/profile/{{user.username}}/edit" enctype="multipart/form-data" method="post">{% csrf_token %}
       {{ form.non_field_errors }}
+      {{ form.image_x }}
+      {{ form.image_y }}
       {{ form.lat }}
       {{ form.lon }}
-      <div class="form-group"> {{ form.profile_pic.errors }}{{ form.profile_pic }} </div>
+      <div class="form-group"> {{ form.image.errors }}{{ form.image }} </div>
       <div class="form-group form-inline"> {{ form.first_name }} {{ form.last_name }} </div>
       <div class="form-group"> {{ form.hometown_name }} </div>
       <div class="form-group"> {{ form.text }} </div>

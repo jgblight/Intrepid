@@ -15,7 +15,16 @@ class Profile_Image(ImageSpec):
     @property 
     def processors(self):
         model, field_name = get_field_info(self.source)
-        return [Crop(width=model.width,height=model.width,x=model.x,y=model.y)]
+        min_dim = min(model.image_file.width,model.image_file.height)
+        print 'crop'
+        print model.image_file.width
+        print model.image_file.height
+        print model.x
+        print model.y
+        return [Crop(width=min_dim,
+                    height=min_dim,
+                    x=int(-1*model.x*model.image_file.width),
+                    y=int(-1*model.y*model.image_file.height))]
 
 register.generator('profile_image', Profile_Image)
 
@@ -28,9 +37,8 @@ class Profile(models.Model):
     user = models.OneToOneField(User)
     image_file = models.ImageField(upload_to="profile",blank=True,null=True)
     image = ImageSpecField(source='image_file',id='profile_image')
-    x = models.IntegerField(default=0)
-    y = models.IntegerField(default=0)
-    width = models.IntegerField(default=500)
+    x = models.FloatField(default=0)
+    y = models.FloatField(default=0)
     hometown = models.ForeignKey(Location,blank=True,null=True)
     text = models.TextField(blank=True)
     created = models.DateTimeField(auto_now=True)

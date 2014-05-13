@@ -167,7 +167,9 @@ def profile_view(request,username):
     })
 
 class EditProfileForm(forms.Form):
-    profile_pic  = forms.ImageField(required=False)
+    image  = forms.ImageField(required=False)
+    image_x = forms.FloatField(required=False,widget=forms.HiddenInput)
+    image_y = forms.FloatField(required=False,widget=forms.HiddenInput)
     first_name = forms.CharField(required=False)
     last_name = forms.CharField(required=False)
     hometown_name = forms.CharField(required=False)
@@ -202,11 +204,19 @@ def edit_profile_view(request,username):
             if form.cleaned_data['text']:
                 profile.text = form.cleaned_data['text']
 
-            if request.FILES.has_key('profile_pic'):
-                profile.image_file = request.FILES['profile_pic']
+            if form.cleaned_data['image_x'] is not None and form.cleaned_data['image_y'] is not None:
+                profile.x = form.cleaned_data['image_x']
+                profile.y = form.cleaned_data['image_y']
+                print 'saved'
+
+            if request.FILES.has_key('image'):
+                profile.image_file = request.FILES['image']
 
             profile.save()
             user.save()
+
+            print profile.x
+            print profile.y
             
             return redirect("/profile/" + username)
     else:
