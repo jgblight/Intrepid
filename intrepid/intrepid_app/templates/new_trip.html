@@ -15,13 +15,14 @@ function readURL(input) {
                     stop: function(e,pos) {
                       $("#id_image_x").val(pos.dimension[0]);
                       $("#id_image_y").val(pos.dimension[1]);
+                      $("#id_image_width").val($("#trip-image-div").width()/photo.width());
                     }                       
                  });
                 photo.imagesLoaded().done(function(){
                   var pos = photo.dragncrop("getPosition");
                   $("#id_image_x").val(pos.dimension[0]);
                   $("#id_image_y").val(pos.dimension[1]);
-                  
+                  $("#id_image_width").val($("#trip-image-div").width()/photo.width());
                 }); 
             }
             
@@ -31,6 +32,8 @@ function readURL(input) {
 {% endblock %}
 
 {% block initialize_script %}
+    $("input").addClass("form-control")
+    $("textarea").addClass("form-control")
 
     $("#id_image").change(function(){
       readURL(this);
@@ -40,11 +43,23 @@ function readURL(input) {
 {% endblock %}
 
 {% block content %}
-{% load bootstrap %}
 <div id="trip-image-div" class="show-trip-image"> <img id="trip-image" src="http://placekitten.com/500/300" /></div> 
 <div id="trip-pane" class="show-trip-pane">
-<form action="/trip/new" method="post">{% csrf_token %}
-{{ form|bootstrap }}
+<form action="/trip/new" enctype="multipart/form-data" method="post">{% csrf_token %}
+  	
+      {{ form.non_field_errors }}
+      {{ form.image_x }}
+      {{ form.image_y }}
+      {{ form.image_width }}
+      <div class="form-group"> 
+      	{{ form.image.errors }}{{ form.image }} </div>
+
+      <h3 class="title-text"> New Trip </h3>
+      <div class="form-group"> 
+      	{{ form.name }} </div>
+      <div class="form-group">
+      	{{ form.description }} </div>
+
 <input type="submit" class="btn btn-default" value="Create" />
 </div>
 {% endblock %}

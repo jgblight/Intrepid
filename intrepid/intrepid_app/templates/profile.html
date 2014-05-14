@@ -52,7 +52,7 @@
     <h3 class="subtitle">Trips</h3>
   	{% for trip in profile_user.trip_set.all %}
   		<div class="trip-item link-item" href="/trip/{{trip.id}}">
-        <div class="link-image-div"> <img class="link-image" src="http://placekitten.com/500/300"></div>
+        <div class="link-image-div"> <img class="link-image" src="{{trip.image.url}}"></div>
         <p class="trip-link">{{trip.name}}</a>
         </div>
   	{% endfor %}

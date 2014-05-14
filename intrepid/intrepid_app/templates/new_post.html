@@ -1,65 +1,42 @@
-{% load bootstrap %}
-<!DOCTYPE html>
-<html>
-<head>
-	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
-	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+{% extends 'map_base.html' %}
 
-	<style type="text/css">
-	  html { height: 100% }
-	  body { height: 100%; margin: 0; padding: 0 }
-	  .map-ancestor {height: 100% }
-	  #map-canvas { height: 100% }
-	</style>
-	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
-	<script type="text/javascript"
-	      src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDml8K6lGP_FoE7gH8ffhCAdN8Dkltf1as&libraries=places&sensor=false">
-    </script>
+  {% block initialize_script %}
+	var searchbox = new google.maps.places.Autocomplete(document.getElementById("id_loc_name"));
 
-	<script type="text/javascript">
-	var map;
+	google.maps.event.addListener(searchbox, 'place_changed', function() {
+		var place = searchbox.getPlace();
+		$("#id_lat").val(place.geometry.location.lat());
+		$("#id_lon").val(place.geometry.location.lng());
+		var marker = new google.maps.Marker({
+			position: place.geometry.location,
+			title: place.name,
+			map: map
+		});
+		map.setCenter(marker.getPosition());
+		map.setZoom(10);
+	});	
 
-	function initialize() {
-		var mapOptions = {
-		  center: new google.maps.LatLng(0, 0),
-          zoom: 2,
-          mapTypeId: google.maps.MapTypeId.ROADMAP
-        };
-        map = new google.maps.Map($("#map-canvas")[0], mapOptions);
+	$("input").addClass("form-control")
+    $("textarea").addClass("form-control")
+    $("id_trip").addClass("form-control")
+  {% endblock %}
 
-		var searchbox = new google.maps.places.Autocomplete(document.getElementById("id_loc_name"));
-
-		google.maps.event.addListener(searchbox, 'place_changed', function() {
-    		var place = searchbox.getPlace();
-			$("#id_lat").val(place.geometry.location.lat());
-			$("#id_lon").val(place.geometry.location.lng());
-			var marker = new google.maps.Marker({
-				position: place.geometry.location,
-				title: place.name,
-				map: map
-			});
-			map.setCenter(marker.getPosition());
-			map.setZoom(10);
-    	});	
-	};
-
-	$( window ).load(initialize);
-	</script>
-</head>
-<body>
-<div class="container map-ancestor">
-<div class="row map-ancestor">
-  <div class="col-md-6 map-ancestor">
-	<div id="map-canvas"></div>
-  </div>
-  <div class="col-md-6">
-	<form action="/post/new" method="post">{% csrf_token %}
-	{{ form|bootstrap_horizontal }}
+  {% block content %}
+  {% load bootstrap %}
+  	<h3 class="title-text"> New Post </h3>
+	<form action="/post/new" enctype="multipart/form-data" method="post">{% csrf_token %}
+	  {{ form.non_field_errors }}
+      {{ form.image_x }}
+      {{ form.image_y }}
+      {{ form.image_width }}
+      {{ form.lat }}
+      {{ form.lon }}
+      <div class="form-group">{{ form.trip }}</div>
+      <div class="form-group">{{ form.name }}</div>
+      <div class="form-group">{{ form.loc_name }}</div>
+      <div class="form-group">{{ form.date }}</div>
+      <div class="form-group form-inline"><label class="control-label">{{ form.tracks }} make tracks? </label></div>
+      <div class="form-group">{{ form.description }}</div>
 	<input type="submit" class="btn btn-default" value="Create" />
 	</form>
-  </div>
-</div>
-</div>
-
-</body>
-</html>
+  {% endblock %}

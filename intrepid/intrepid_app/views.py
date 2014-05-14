@@ -76,18 +76,29 @@ class TripForm(forms.Form):
     image = forms.ImageField(required=False)
     image_x = forms.FloatField(required=False,widget=forms.HiddenInput)
     image_y = forms.FloatField(required=False,widget=forms.HiddenInput)
-    name = forms.CharField(label="Title",max_length=200)
-    description = forms.CharField(label="Description",widget=forms.Textarea(attrs={'rows':4, 'cols':30}),required=False)
+    image_width = forms.FloatField(required=False,widget=forms.HiddenInput)
+    name = forms.CharField(max_length=200,widget=forms.TextInput(attrs={'placeholder': 'Trip Title'}))
+    description = forms.CharField(widget=forms.Textarea(attrs={'rows':4, 'cols':30, 'placeholder':'Enter a description'}),required=False)
 
 @login_required
 def new_trip_view(request):
     if request.method == "POST":
-        form = TripForm(request.POST)
+        form = TripForm(request.POST,request.FILES)
+        print request.FILES
         if form.is_valid():
             name = form.cleaned_data['name']
             description = form.cleaned_data['description']
 
-            new_trip = Trip(name=name,text=description,user=request.user)
+            if request.FILES.has_key('image'):
+                image_file = request.FILES['image']
+            else:
+                image_file = None
+
+            x = form.cleaned_data['image_x'] if form.cleaned_data['image_x'] else 0
+            y = form.cleaned_data['image_y'] if form.cleaned_data['image_y'] else 0
+            image_width = form.cleaned_data['image_width'] if form.cleaned_data['image_width'] else 1
+
+            new_trip = Trip(name=name,text=description,user=request.user,image_file=image_file,image_x=x,image_y=y,image_width=image_width)
             new_trip.save()
             return redirect(new_post_view) #TODO: should redirect to trip page
     else:
@@ -97,14 +108,14 @@ def new_trip_view(request):
         })
 
 class NewPostForm(forms.Form):
-    name = forms.CharField(label="Title",max_length=200)
-    trip = forms.CharField(label="Trip")
-    loc_name = forms.CharField(label="Location")
+    name = forms.CharField(max_length=200,widget=forms.TextInput(attrs={'placeholder': 'Post Title'}))
+    trip = forms.CharField()
+    loc_name = forms.CharField()
     lat = forms.FloatField(widget=forms.HiddenInput)
     lon = forms.FloatField(widget=forms.HiddenInput)
     tracks = forms.BooleanField(label="Make Tracks?",widget=forms.CheckboxInput,required=False)
-    date = forms.DateField(label="Start Date",initial=datetime.date.today(),widget=SelectDateWidget)
-    description = forms.CharField(label="Description",widget=forms.Textarea,required=False)
+    date = forms.DateField(initial=datetime.date.today(),widget=SelectDateWidget)
+    description = forms.CharField(widget=forms.Textarea(attrs={'rows':4, 'cols':30, 'placeholder':'Enter a description'}),required=False)
 
     def __init__(self, user, *args, **kwargs):
         super(NewPostForm, self).__init__(*args, **kwargs)
@@ -208,18 +219,14 @@ def edit_profile_view(request,username):
                 profile.text = form.cleaned_data['text']
 
             if form.cleaned_data['image_x'] is not None and form.cleaned_data['image_y'] is not None:
-                profile.x = form.cleaned_data['image_x']
-                profile.y = form.cleaned_data['image_y']
-                print 'saved'
+                profile.image_x = form.cleaned_data['image_x']
+                profile.image_y = form.cleaned_data['image_y']
 
             if request.FILES.has_key('image'):
                 profile.image_file = request.FILES['image']
 
             profile.save()
             user.save()
-
-            print profile.x
-            print profile.y
             
             return redirect("/profile/" + username)
     else:

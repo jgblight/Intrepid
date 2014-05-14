@@ -8,6 +8,10 @@
 		padding: 0 ;
 		}
 
+	form {
+		margin : 5px ;
+	}
+
 	.width-fill { 
 		width : 100% ;
 		}
@@ -27,7 +31,7 @@
 	}
 
 	.header {
-		background-color: #5A2E2E ;
+		background-color: #363535 ;
 		height : 40px ; 
 	}
 
@@ -59,6 +63,7 @@
 		}
 
 	.form-control {
+		font-family : 'Raleway', sans-serif ;
 		width : 80% ;
 		margin-left: auto ;
 		margin-right: auto ;
@@ -102,6 +107,12 @@
 		margin-right : 12% ;
 		margin-bottom : 5px ; 
 		padding : 5px ;
+	}
+
+	.control-label {
+		font-family : 'Raleway', sans-serif ;
+		color : #2A2C31 ;
+		font-size: 11pt ;
 	}
 
 	.trip-list {
@@ -173,6 +184,10 @@
 	.drop-link {
 		margin-right: 5px ;
 		color : #000000 ;
+	}
+
+	.right-menu {
+		min-width : 0;
 	}
 
 	#map-canvas { 

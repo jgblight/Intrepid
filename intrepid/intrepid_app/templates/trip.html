@@ -84,7 +84,14 @@
 {% endblock %}
 
 {% block content %}
-  	<div id="trip-image-div"> <img id="trip-image" src="http://placekitten.com/500/300" /></div> 
+  	<div id="trip-image-div"> 
+  		{% if trip.image %}
+  		<img id="trip-image" src="{{trip.image.url}}" />
+  		{% else %}
+  		<img id="trip-image" src="http://placekitten.com/500/300" />
+  		{% endif %}
+  	</div>
+
   	<div id="trip-pane">
 	  	<div id="trip-info">
 	  		<div class="header-div">
