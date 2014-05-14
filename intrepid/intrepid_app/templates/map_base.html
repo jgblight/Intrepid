@@ -62,7 +62,7 @@
   {% if user.is_authenticated %}
     <img class="header-icon link-item" href="/profile/{{user.username}}" src="{{user.profile.image.url}}"/>
     <div class="dropdown header-icon-wrapper">
-      <img id="dLabel" class="header-icon dropdown-toggle" data-toggle="dropdown"  src="/static/pin.svg" />
+      <img id="dLabel" class="header-icon dropdown-toggle" data-toggle="dropdown"  src="/static/white_pin.svg" />
     <ul class="dropdown-menu right-menu" role="menu" aria-labelledby="dLabel">
       {% if user.trip_set.all %}
       <li> <a class="drop-link" href="/post/new"> New Post </a> </li>

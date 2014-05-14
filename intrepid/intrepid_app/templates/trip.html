@@ -14,7 +14,7 @@
 		$("#pin-info").hide();
 		$("#trip-info").show();
 		map.setCenter(new google.maps.LatLng({{center_lat}}, {{center_lon}}));
-		map.setZoom(5);
+		map.setZoom(6);
 	}
 
 	function pinListener(info) {
@@ -25,7 +25,7 @@
 		pin_div.find("#pin-date").html(info.date);
 		pin_div.find("#pin-blurb").html(info.blurb);
 		map.setCenter(new google.maps.LatLng(info.lat, info.lon));
-		map.setZoom(10);
+		map.setZoom(8);
 		showPin();
 	};
 
@@ -34,7 +34,7 @@
 {% block initialize_map %}
 		var mapOptions = {
 		  center: new google.maps.LatLng({{center_lat}}, {{center_lon}}),
-          zoom: 5,
+          zoom: 6,
           mapTypeId: google.maps.MapTypeId.TERRAIN,
           mapTypeControl: false,
           panControl: true,
@@ -52,6 +52,9 @@
         	loc = new google.maps.LatLng({{p.location.lat}},{{p.location.lon}})
 			marker = new google.maps.Marker({	
 				position: loc,
+				icon : { url : '/static/pin_2.svg',
+						scaledSize : new google.maps.Size(30,45,'px','px'),
+						size : new google.maps.Size(30,45,'px','px') }
 			});
 			marker.setMap(map);
 			{% if p.tracks %}

@@ -200,6 +200,10 @@
 		left : auto;
 	}
 
+	.link-item:hover {
+		cursor : pointer;
+	}
+
 	#map-canvas { 
 		height : 100% ; 
 		}
