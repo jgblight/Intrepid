@@ -73,8 +73,11 @@ def signup_view(request):
         })
 
 class TripForm(forms.Form):
+    image = forms.ImageField(required=False)
+    image_x = forms.FloatField(required=False,widget=forms.HiddenInput)
+    image_y = forms.FloatField(required=False,widget=forms.HiddenInput)
     name = forms.CharField(label="Title",max_length=200)
-    description = forms.CharField(label="Description",widget=forms.Textarea,required=False)
+    description = forms.CharField(label="Description",widget=forms.Textarea(attrs={'rows':4, 'cols':30}),required=False)
 
 @login_required
 def new_trip_view(request):
@@ -175,7 +178,7 @@ class EditProfileForm(forms.Form):
     hometown_name = forms.CharField(required=False)
     lat = forms.FloatField(widget=forms.HiddenInput,required=False)
     lon = forms.FloatField(widget=forms.HiddenInput,required=False)
-    text = forms.CharField(widget=forms.Textarea,required=False)
+    text = forms.CharField(widget=forms.Textarea(attrs={'rows':4, 'cols':30}),required=False)
 
 @login_required
 def edit_profile_view(request,username):
