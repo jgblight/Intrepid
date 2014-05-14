@@ -172,13 +172,21 @@
 
 	.header-right {
 		text-align: right ;
+		padding-right: 30px;
+	}
+
+	.header-icon-wrapper {
+		max-width : 36px ;
+		margin: 2px ;
+		margin-left: 5px ;
+		margin-right: 5px ;
+		display: inline-block;
 	}
 
 	.header-icon {
 		display: inline-block;
 		width: 36px ;
 		height: 36px ;
-		margin : 2px ;
 	}
 
 	.drop-link {
@@ -188,6 +196,8 @@
 
 	.right-menu {
 		min-width : 0;
+		right : 5px ;
+		left : auto;
 	}
 
 	#map-canvas { 
