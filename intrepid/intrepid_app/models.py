@@ -56,6 +56,13 @@ class Profile(models.Model):
     text = models.TextField(blank=True)
     created = models.DateTimeField(auto_now=True)
 
+    def get_image_url(self):
+        if self.image:
+            return self.image.url
+        else:
+            return "http://placekitten.com/400/400"
+
+
 def create_profile(sender, **kwargs):
     user = kwargs["instance"]
     if kwargs["created"]:
@@ -75,6 +82,12 @@ class Trip(models.Model):
     text = models.TextField()
     active = models.BooleanField(default=True)
 
+    def get_image_url(self):
+        if self.image:
+            return self.image.url
+        else:
+            return "http://placekitten.com/500/300"
+
 class Pin(models.Model):
     trip = models.ForeignKey(Trip)
     name = models.CharField(max_length=200)
@@ -82,3 +95,8 @@ class Pin(models.Model):
     location = models.ForeignKey(Location)
     tracks = models.BooleanField(default=False)
     text = models.TextField()
+
+class Media(models.Model):
+    pin = models.ForeignKey(Pin,blank=True,null=True)
+    media = models.FileField(upload_to="post_data")
+    caption = models.CharField(max_length=200,blank=True)

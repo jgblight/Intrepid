@@ -1,14 +1,17 @@
 import re
 import datetime
+import simplejson
 from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
-from intrepid_app.models import Profile,Trip, Pin,Location
+from intrepid_app.models import Profile,Trip, Pin,Location,Media
 from django import forms
 from django.forms.extras import SelectDateWidget
-
+from django.http import HttpResponse
+from django.db.utils import *
+import sys
 
 # Create your views here.
 
@@ -82,7 +85,6 @@ class TripForm(forms.Form):
 def new_trip_view(request):
     if request.method == "POST":
         form = TripForm(request.POST,request.FILES)
-        print request.FILES
         if form.is_valid():
             name = form.cleaned_data['name']
             description = form.cleaned_data['description']
@@ -98,7 +100,7 @@ def new_trip_view(request):
 
             new_trip = Trip(name=name,text=description,user=request.user,image_file=image_file,image_x=x,image_y=y,image_width=image_width)
             new_trip.save()
-            return redirect(new_post_view) #TODO: should redirect to trip page
+            return redirect('/trip/'+str(new_trip.id)+'/post')
     else:
         form = TripForm()
     return render(request, 'new_trip.html', {
@@ -107,7 +109,6 @@ def new_trip_view(request):
 
 class NewPostForm(forms.Form):
     name = forms.CharField(max_length=200,widget=forms.TextInput(attrs={'placeholder': 'Post Title'}))
-    trip = forms.CharField()
     loc_name = forms.CharField()
     lat = forms.FloatField(widget=forms.HiddenInput)
     lon = forms.FloatField(widget=forms.HiddenInput)
@@ -115,14 +116,11 @@ class NewPostForm(forms.Form):
     date = forms.DateField(initial=datetime.date.today(),widget=SelectDateWidget)
     description = forms.CharField(widget=forms.Textarea(attrs={'rows':4, 'cols':30, 'placeholder':'Enter a description'}),required=False)
 
-    def __init__(self, user, *args, **kwargs):
-        super(NewPostForm, self).__init__(*args, **kwargs)
-        self.fields['trip'] = forms.ChoiceField(label="Trip",choices=[ (o.id, o.name) for o in Trip.objects.filter(user=user)])
-
 @login_required
-def new_post_view(request):
+def new_post_view(request,trip_id):
+    trip = get_object_or_404(Trip, pk=trip_id)
     if request.method == "POST":
-        form = NewPostForm(request.user,request.POST)
+        form = NewPostForm(request.POST)
         if form.is_valid():
             lat = form.cleaned_data['lat']
             lon = form.cleaned_data['lon']
@@ -130,20 +128,31 @@ def new_post_view(request):
             location = Location(lat=lat,lon=lon,name=location_name)
             location.save()
 
-            trip = Trip.objects.get(pk=form.cleaned_data['trip'])
             name = form.cleaned_data['name']
             pin_date = form.cleaned_data['date']
             tracks = form.cleaned_data['tracks']
             text = form.cleaned_data['description']
             pin = Pin(trip=trip,name=name,pin_date=pin_date,location=location,tracks=tracks,text=text)
             pin.save()
-            return redirect(index_view) #TODO: should redirect to trip page
+            return redirect('/trip/'+str(trip_id)) 
     else:
-        form = NewPostForm(request.user)
+        form = NewPostForm()
     return render(request, 'new_post.html', {
+        'trip' : trip ,
         'form': form
         })
 
+def file_upload_view(request):
+    if request.method == "POST":
+        new_file = request.FILES[u'files[]']
+        media = Media(media=new_file)
+        media.save()
+
+        result = [{'name':media.media.url},]
+        response_data = simplejson.dumps(result)
+        return HttpResponse(response_data, mimetype='application/json')
+    else:
+        pass # handle errors
 
 @login_required
 def index_view(request):

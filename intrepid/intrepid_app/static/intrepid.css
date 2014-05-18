@@ -225,6 +225,13 @@
 	.drop-link {
 		margin-right: 5px ;
 		color : #000000 ;
+
+	}
+
+	.drop-link-bold {
+		padding-left : 20px ;
+		padding-right : 20px ;
+		font-weight: bold;
 	}
 
 	.right-menu {

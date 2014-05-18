@@ -19,6 +19,7 @@ urlpatterns += patterns('intrepid_app.views',
 	url(r'^profile/(?P<username>[0-9A-Za-z_@\+\-\.]+)/edit$','edit_profile_view'),
 	url(r'^trip/new$','new_trip_view'),
 	url(r'^trip/(?P<trip_id>[0-9]+)$','trip_view'),
-	url(r'^post/new$','new_post_view'))
+	url(r'^trip/(?P<trip_id>[0-9]+)/post$','new_post_view'),
+	url(r'^file_upload$','file_upload_view'))
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,5 +1,12 @@
 {% extends 'map_base.html' %}
 
+  {% block dependencies %}
+  <script src="/static/upload/vendor/jquery.ui.widget.js"></script>
+  <script src="/static/upload/jquery.iframe-transport.js"></script>
+  <script src="/static/upload/jquery.fileupload.js"></script>
+
+  {% endblock %}
+
   {% block initialize_script %}
 	var searchbox = new google.maps.places.Autocomplete(document.getElementById("id_loc_name"));
 
@@ -19,24 +26,41 @@
 	  $("input").addClass("form-control")
     $("textarea").addClass("form-control")
     $("#id_trip").addClass("form-control")
+
+    $('#fileupload').fileupload({
+        dataType: 'json',
+        done: function (e, data) {
+            $.each(data.result, function (index, file) {
+                $('<p/>').text(file.name).appendTo("#uploaded");
+            });
+        }
+    });
   {% endblock %}
 
   {% block content %}
   {% load bootstrap %}
+  <div id="trip-image-div" class="show-pin-image">
+      {% if trip.image %}
+      <img id="trip-image" src="{{trip.image.url}}" />
+      {% else %}
+      <img id="trip-image" src="http://placekitten.com/500/300" />
+      {% endif %}
+  </div> 
+  <div id="trip-pane" class="show-pin-pane">
+    <p class="subtitle" id="trip-name"> {{trip.name}} </p>
   	<h3 class="title-text"> New Post </h3>
-	<form action="/post/new" enctype="multipart/form-data" method="post">{% csrf_token %}
+	<form action="/trip/{{trip.id}}/post" enctype="multipart/form-data" method="post">{% csrf_token %}
 	  {{ form.non_field_errors }}
-      {{ form.image_x }}
-      {{ form.image_y }}
-      {{ form.image_width }}
-      {{ form.lat }}
-      {{ form.lon }}
-      <div class="form-group">{{ form.trip }}</div>
-      <div class="form-group">{{ form.name }}</div>
-      <div class="form-group">{{ form.loc_name }}</div>
-      <div class="form-group">{{ form.date }}</div>
-      <div class="form-group form-inline"><label class="control-label">{{ form.tracks }} make tracks? </label></div>
-      <div class="form-group">{{ form.description }}</div>
+      {{form.lat.errors}}{{ form.lat }}
+      {{form.lon.errors}}{{ form.lon }}
+      <div class="form-group">{{form.name.errors}}{{ form.name }}</div>
+      <div class="form-group">{{form.loc_name.errors}}{{ form.loc_name }}</div>
+      <div class="form-group">{{form.date.errors}}{{ form.date }}</div>
+      <div class="form-group" id="uploaded"> </div>
+      <div class="form-group form-inline"><label class="control-label">{{form.tracks.errors}}{{ form.tracks }} make tracks? </label></div>
+      <input id="fileupload" type="file" name="files[]" data-url="/file_upload" multiple>
+      <div class="form-group">{{form.description.errors}}{{ form.description }}</div>
 	<input type="submit" class="btn btn-default" value="Create" />
 	</form>
+  </div>
   {% endblock %}

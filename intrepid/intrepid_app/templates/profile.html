@@ -27,11 +27,7 @@
 
 {% block content %}
   	<div class="insert-holder">
-      {% if profile_user.profile.image %}
-      <img class="insert-image" src="{{profile_user.profile.image.url}}" />
-      {% else %}
-      <img class="insert-image" src="http://placekitten.com/500/500"/>
-      {% endif %}
+      <img class="insert-image" src="{{profile_user.profile.get_image_url}}" />
   	</div>
     <div class="header-div">
   	{% if profile_user.first_name %}
@@ -52,7 +48,7 @@
     {% if profile_user.trip_set.all %}
   	{% for trip in profile_user.trip_set.all %}
   		<div class="trip-item link-item" href="/trip/{{trip.id}}">
-        <div class="link-image-div"> <img class="link-image" src="{{trip.image.url}}"></div>
+        <div class="link-image-div"> <img class="link-image" src="{{trip.get_image_url}}"></div>
         <p class="trip-link">{{trip.name}}</a>
         </div>
   	{% endfor %}
