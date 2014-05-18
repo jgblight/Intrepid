@@ -17,7 +17,7 @@ class SignupForm(forms.Form):
     email = forms.EmailField(label="Email")
     password1 = forms.CharField(label="Password",
         widget=forms.PasswordInput)
-    password2 = forms.CharField(label="Re-type Password",
+    password2 = forms.CharField(label="Confirm Password",
         widget=forms.PasswordInput)
 
     error_messages = {

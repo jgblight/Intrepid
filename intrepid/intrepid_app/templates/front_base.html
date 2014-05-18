@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+  <link href='http://fonts.googleapis.com/css?family=Josefin+Slab:400,600|Raleway' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="/static/intrepid.css">
+
+  <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+  <script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+  <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function(){
+      $(".control-label").addClass("control-label-alt");
+    });
+  </script>
+
+</head>
+<body>
+
+<div class="container fill width-fill splash-page">
+
+<div class="row fill width-fill">
+  <div class="col-xs-6 col-sm-6 fill">
+	<div class="center-block-logo">
+    <h1 class="big-logo">Intrepid</h1><br>
+    <img class="front-pin" src="/static/pin_1.svg">
+    <img class="front-pin" src="/static/pin_2.svg">
+    <img class="front-pin" src="/static/pin_3.svg">
+    <img class="front-pin" src="/static/pin_4.svg">
+  </div>
+  </div>
+  <div class="col-xs-6 col-sm-6 fill">
+    {% block content %}{% endblock %}
+  </div>
+</div>
+</div>
+
+</body>
+</html>

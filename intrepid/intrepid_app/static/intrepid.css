@@ -12,6 +12,10 @@
 		margin : 5px ;
 	}
 
+	.splash-page {
+		background-color: #363535;
+	}
+
 	.width-fill { 
 		width : 100% ;
 		}
@@ -75,6 +79,13 @@
 		margin: 2px ;
 	}
 
+	.big-logo {		
+		font-family : 'Josefin Slab', serif ;
+		text-align: center;
+		color : #FFFFFF ;
+		font-size :  60px;
+	}
+
 	.logo {
 		font-family : 'Josefin Slab', serif ;
 		text-align: center;
@@ -113,6 +124,23 @@
 		font-family : 'Raleway', sans-serif ;
 		color : #2A2C31 ;
 		font-size: 11pt ;
+		margin-top: 5px ;
+		margin-bottom: 5px ;
+	}
+
+	.control-label-alt {
+		color : #FFFFFF ;
+		font-size: 9pt ;
+	}
+
+	.btn {
+		margin-top: 5px ;
+		margin-bottom: 5px ;
+	}
+
+	.form-control {
+		margin-top: 5px ;
+		margin-bottom: 5px ;
 	}
 
 	.trip-list {
@@ -170,6 +198,11 @@
 		overflow : hidden ;
 	}
 
+	.front-pin {
+		max-height : 100px ;
+		margin : 10px;
+	}
+
 	.header-right {
 		text-align: right ;
 		padding-right: 30px;
@@ -202,6 +235,22 @@
 
 	.link-item:hover {
 		cursor : pointer;
+	}
+
+	.center-block-logo {
+		height : 300px;
+		position : relative;
+		top : 50%;
+		margin-top: -150px;
+		text-align : center;
+	}
+
+	.center-block-form {
+		height : 200px;
+		position : relative;
+		top : 50%;
+		margin-top: -100px;
+		text-align : center;
 	}
 
 	#map-canvas { 
