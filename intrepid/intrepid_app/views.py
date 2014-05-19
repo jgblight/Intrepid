@@ -121,6 +121,7 @@ def new_post_view(request,trip_id):
     trip = get_object_or_404(Trip, pk=trip_id)
     if request.method == "POST":
         form = NewPostForm(request.POST)
+        print request.POST
         if form.is_valid():
             lat = form.cleaned_data['lat']
             lon = form.cleaned_data['lon']
@@ -134,6 +135,11 @@ def new_post_view(request,trip_id):
             text = form.cleaned_data['description']
             pin = Pin(trip=trip,name=name,pin_date=pin_date,location=location,tracks=tracks,text=text)
             pin.save()
+
+            for media_id in request.POST.getlist('uploads',[]):
+                media = Media.objects.get(pk=int(media_id))
+                media.pin = pin
+                media.save()
             return redirect('/trip/'+str(trip_id)) 
     else:
         form = NewPostForm()
@@ -148,7 +154,8 @@ def file_upload_view(request):
         media = Media(media=new_file)
         media.save()
 
-        result = [{'name':media.media.url},]
+        result = [{'id':media.id,
+                    'name':new_file.name},]
         response_data = simplejson.dumps(result)
         return HttpResponse(response_data, mimetype='application/json')
     else:

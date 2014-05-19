@@ -32,6 +32,10 @@
         done: function (e, data) {
             $.each(data.result, function (index, file) {
                 $('<p/>').text(file.name).appendTo("#uploaded");
+                $('<input type="hidden" />')
+                  .attr('name','uploads')
+                  .attr('value',file.id)
+                  .appendTo('#post_form')
             });
         }
     });
@@ -49,7 +53,7 @@
   <div id="trip-pane" class="show-pin-pane">
     <p class="subtitle" id="trip-name"> {{trip.name}} </p>
   	<h3 class="title-text"> New Post </h3>
-	<form action="/trip/{{trip.id}}/post" enctype="multipart/form-data" method="post">{% csrf_token %}
+	<form id="post_form" action="/trip/{{trip.id}}/post" enctype="multipart/form-data" method="post">{% csrf_token %}
 	  {{ form.non_field_errors }}
       {{form.lat.errors}}{{ form.lat }}
       {{form.lon.errors}}{{ form.lon }}
