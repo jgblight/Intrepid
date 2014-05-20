@@ -1,5 +1,9 @@
 {% extends "map_base.html" %}
 
+{% block dependencies %}
+<script src="/static/jquery.slides.js"></script>
+{% endblock %}
+
 {% block script_functions %}
 	function showPin() {
 		$("#trip-pane").removeClass("show-trip-pane").addClass("show-pin-pane");
@@ -19,11 +23,21 @@
 
 	function pinListener(info) {
 		var pin_div = $("#pin-info");
-		console.log(pin_div)
 		pin_div.find("#pin-title").html(info.name);
 		pin_div.find("#pin-location").html(info.location);
 		pin_div.find("#pin-date").html(info.date);
 		pin_div.find("#pin-blurb").html(info.blurb);
+		if ( info.media.length > 0 ) {
+			$(".slidesjs-control").empty();
+			for (var i = 0; i < info.media.length; i++) {
+				$("<img />").attr("src",info.media[i].url).addClass('insert-image').appendTo(".slidesjs-control");
+			}
+			$("#slides").slidesjs('refresh');
+			$("#pin-image-div").show();
+		}
+		else {
+			pin_div.find("#pin-image-div").hide();
+		}
 		map.setCenter(new google.maps.LatLng(info.lat, info.lon));
 		map.setZoom(8);
 		showPin();
@@ -68,7 +82,12 @@
 					location : "{{ p.location.name }}",
 					date : "{{ p.pin_date.date }}",
 					lat : {{p.location.lat}},
-					lon : {{p.location.lon}}
+					lon : {{p.location.lon}},
+					media : [
+					{% for m in p.media_set.all %}
+						{ url : "{{ m.image.pin_display.url }}" },
+					{% endfor %}
+					]
 				};
 				pinListener(info);
 			});
@@ -82,8 +101,14 @@
 		});
 		poly.setMap(map);
 
+		$("#slides").slidesjs({
+    		width: 200,
+    		height: 200
+    	});
+
 		showTrip();
 		$("#trip-name").click(showTrip);
+
 {% endblock %}
 
 {% block content %}
@@ -116,8 +141,8 @@
 	  		<p class="minor-text" id="pin-date"> </p>
 	  		</div>
 
-	  		<div class="insert-holder">
-  			<img class="insert-image" src="http://placekitten.com/500/500">
+	  		<div id="slides" class="insert-holder slides">
+	  			<img src="http://placekitten.com/200/200">
   			</div>
 
   			<div class="blurb" id="pin-blurb"> </div>

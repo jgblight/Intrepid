@@ -54,17 +54,20 @@
 	 	width : 200px ;
 		height : 200px ;
 		margin-top : 10px ;
-		display : inline-block ;
 		margin-left : auto ;
 		margin-right : auto ;
 		padding : 0px ;
 		border-radius : 10px ;
-		overflow: hidden ;
 		}
 
 	.insert-image { 	
 		max-width : 100%;
+		border-radius : 10px ;
 		}
+
+	.slides {
+		height : auto;
+	}
 
 	.form-control {
 		font-family : 'Raleway', sans-serif ;
@@ -235,7 +238,7 @@
 	}
 
 	.right-menu {
-		min-width : 0;
+		min-width : 100px;
 		right : 5px ;
 		left : auto;
 	}
