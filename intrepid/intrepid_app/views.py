@@ -1,4 +1,3 @@
-import re
 import datetime
 import simplejson
 from django.shortcuts import render,redirect,get_object_or_404
@@ -93,6 +92,8 @@ def new_trip_view(request):
 @login_required
 def new_post_view(request,trip_id):
     trip = get_object_or_404(Trip, pk=trip_id)
+    if request.user != trip.user:
+        return redirect("/")
     if request.method == "POST":
         form = forms.NewPostForm(request.POST)
         print request.POST

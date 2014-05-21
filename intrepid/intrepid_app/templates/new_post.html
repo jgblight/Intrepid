@@ -10,6 +10,7 @@
 	var searchbox = new google.maps.places.Autocomplete(document.getElementById("id_loc_name"));
 
 	google.maps.event.addListener(searchbox, 'place_changed', function() {
+    clearMap();
 		var place = searchbox.getPlace();
 		$("#id_lat").val(place.geometry.location.lat());
 		$("#id_lon").val(place.geometry.location.lng());
@@ -20,6 +21,7 @@
 		});
 		map.setCenter(marker.getPosition());
 		map.setZoom(8);
+    markerArray.push(marker);
 	});	
 
 	  $("input").addClass("form-control")

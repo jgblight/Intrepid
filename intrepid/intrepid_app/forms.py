@@ -1,6 +1,8 @@
 import datetime
+import re
 from django import forms
 from django.forms.extras import SelectDateWidget
+from django.contrib.auth.models import User
 
 class SignupForm(forms.Form):
     username = forms.CharField(label="Username",max_length=100)

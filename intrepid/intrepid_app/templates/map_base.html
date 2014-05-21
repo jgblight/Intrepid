@@ -19,6 +19,14 @@
   {% block dependencies %}{% endblock %}
   <script type="text/javascript">
   	var map;
+    var markerArray = [];
+
+    function clearMap() {
+      for (var i = 0; i < markerArray.length; i++ ) {
+        markerArray[i].setMap(null);
+      }
+      markerArray.length = [];
+    };
 
     {% block script_functions %}{% endblock %}      
 
