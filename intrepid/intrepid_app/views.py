@@ -19,7 +19,7 @@ def index_view(request):
 
 def trip_view(request,trip_id):
     trip = get_object_or_404(Trip, pk=trip_id)
-    pins = trip.pin_set.all()
+    pins = trip.pins()
 
     center_lat = 0.0;
     center_lon = 0.0;
@@ -124,20 +124,21 @@ def new_post_view(request,trip_id):
         })
 
 def file_upload_view(request):
-    try:
-        if request.method == "POST":
-            new_file = request.FILES[u'files[]']
+    if request.method == "POST":
+        new_file = request.FILES[u'files[]']
+        try:
             media = Image(media=new_file)
             media.save()
-
             result = [{'id':media.id,
                         'name':new_file.name},]
-            response_data = simplejson.dumps(result)
-            return HttpResponse(response_data, mimetype='application/json')
-        else:
-            pass # handle errors
-    except:
-        print sys.exc_info()
+        except TypeError as e:
+            print e
+            result = [{"error":"Please upload a valid image"}]
+
+        response_data = simplejson.dumps(result)
+        return HttpResponse(response_data, mimetype='application/json')
+    else:
+        pass #return
 
 @login_required
 def edit_profile_view(request,username):

@@ -30,16 +30,8 @@
       <img class="insert-image" src="{{profile_user.profile.get_image_url}}" />
   	</div>
     <div class="header-div">
-  	{% if profile_user.first_name %}
-  	<h2 class="title-text">{{profile_user.first_name}} {{profile_user.last_name}}</h2>
-  	{% else %}
-  	<h2 class="title-text">{{profile_user.username}}</h2>
-  	{% endif %}
-  	{% if profile_user.profile.hometown.name %}
-  	<p class="minor-text">{{profile_user.profile.hometown.name}}</p>
-  	{% else %}
-  	<p class="minor-text">&nbsp;</p>
-  	{% endif %}
+  	<h2 class="title-text">{{profile_user.profile.get_name}}</h2>
+  	<p class="minor-text">{{profile_user.profile.get_hometown}}</p>
     </div>
   	<div class="blurb"> {{profile_user.profile.text}} </div>
 

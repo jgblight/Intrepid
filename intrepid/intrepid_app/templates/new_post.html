@@ -28,15 +28,21 @@
     $("textarea").addClass("form-control")
     $("#id_trip").addClass("form-control")
 
+    $("#id_date").datepicker();
+
     $('#fileupload').fileupload({
         dataType: 'json',
         done: function (e, data) {
             $.each(data.result, function (index, file) {
-                $('<p/>').text(file.name).appendTo("#uploaded");
-                $('<input type="hidden" />')
-                  .attr('name','uploads')
-                  .attr('value',file.id)
-                  .appendTo('#post_form')
+                if (file.hasOwnProperty('error')){
+                  $('<p/>').text(file.error).appendTo("#uploaded");
+                } else {
+                  $('<p/>').text(file.name).appendTo("#uploaded");
+                  $('<input type="hidden" />')
+                    .attr('name','uploads')
+                    .attr('value',file.id)
+                    .appendTo('#post_form')
+                }
             });
         }
     });
@@ -45,11 +51,7 @@
   {% block content %}
   {% load bootstrap %}
   <div id="trip-image-div" class="show-pin-image">
-      {% if trip.image %}
-      <img id="trip-image" src="{{trip.image.url}}" />
-      {% else %}
-      <img id="trip-image" src="http://placekitten.com/500/300" />
-      {% endif %}
+      <img id="trip-image" src="{{trip.get_image_url}}" />
   </div> 
   <div id="trip-pane" class="show-pin-pane">
     <p class="subtitle" id="trip-name"> {{trip.name}} </p>

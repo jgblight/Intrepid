@@ -1,3 +1,4 @@
+import datetime
 from django.db import models
 from django.db.models.signals import post_save
 from django.contrib.auth.models import User
@@ -26,6 +27,17 @@ class Profile(models.Model):
         else:
             return "http://placekitten.com/400/400"
 
+    def get_hometown(self):
+        if self.hometown:
+            return self.hometown.name
+        else:
+            return ""
+
+    def get_name(self): 
+        if self.user.first_name:
+            return self.user.first_name + " " + self.user.last_name
+        else:
+            return self.user.username
 
 def create_profile(sender, **kwargs):
     user = kwargs["instance"]
@@ -43,7 +55,7 @@ class Trip(models.Model):
     image_x = models.FloatField(default=0)
     image_y = models.FloatField(default=0)
     image_width = models.FloatField(default=1)
-    text = models.TextField()
+    text = models.TextField(blank=True)
     active = models.BooleanField(default=True)
 
     def get_image_url(self):
@@ -52,10 +64,31 @@ class Trip(models.Model):
         else:
             return "http://placekitten.com/500/300"
 
+    def start(self):
+        first_pin = self.pin_set.first()
+        if first_pin:
+            return first_pin.pin_date.date()
+        else:
+            return '???'
+
+    def end(self):
+        last_pin = self.pin_set.last()
+        if last_pin:
+            return last_pin.pin_date.date()
+        else:
+            return '???'
+
+    def pins(self):
+        return self.pin_set.order_by("pin_date")
+
+
+    def pins_reverse(self):
+        return self.pin_set.order_by("-pin_date")
+
 class Pin(models.Model):
     trip = models.ForeignKey(Trip)
     name = models.CharField(max_length=200)
-    pin_date = models.DateTimeField()
+    pin_date = models.DateTimeField(default=datetime.datetime.today())
     location = models.ForeignKey(Location)
     tracks = models.BooleanField(default=False)
     text = models.TextField()

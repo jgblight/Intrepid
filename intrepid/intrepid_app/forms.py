@@ -56,7 +56,7 @@ class NewPostForm(forms.Form):
     lat = forms.FloatField(widget=forms.HiddenInput)
     lon = forms.FloatField(widget=forms.HiddenInput)
     tracks = forms.BooleanField(label="Make Tracks?",widget=forms.CheckboxInput,required=False)
-    date = forms.DateField(initial=datetime.date.today(),widget=SelectDateWidget)
+    date = forms.DateField(initial=datetime.date.today(),widget=forms.TextInput)
     description = forms.CharField(widget=forms.Textarea(attrs={'rows':4, 'cols':30, 'placeholder':'Enter a description'}),required=False)
 
 class EditProfileForm(forms.Form):
