@@ -81,9 +81,21 @@ class Trip(models.Model):
     def pins(self):
         return self.pin_set.order_by("pin_date")
 
-
     def pins_reverse(self):
         return self.pin_set.order_by("-pin_date")
+
+    def get_center(self):
+        pins = self.pins()
+        center_lat = 0.0;
+        center_lon = 0.0;
+        if len(pins):
+            for p in pins:
+                center_lat += p.location.lat
+                center_lon += p.location.lon
+            center_lat /= len(pins)
+            center_lon /= len(pins)
+
+        return (center_lat,center_lon)
 
 class Pin(models.Model):
     trip = models.ForeignKey(Trip)

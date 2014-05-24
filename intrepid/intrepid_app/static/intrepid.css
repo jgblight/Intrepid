@@ -12,6 +12,10 @@
 		margin : 5px ;
 	}
 
+	.ui-datepicker {
+		font-size : 0.7em;
+	}
+
 	.splash-page {
 		background-color: #363535;
 	}
@@ -261,6 +265,18 @@
 		top : 50%;
 		margin-top: -100px;
 		text-align : center;
+	}
+
+	.thumbnail {
+		width : 100px;
+		height : 100px;
+		display : inline-block;
+		margin : 3px;
+	}
+
+	.navigation {
+		margin : 6px;
+		color: black;
 	}
 
 	#map-canvas { 

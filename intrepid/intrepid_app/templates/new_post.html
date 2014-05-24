@@ -1,12 +1,45 @@
 {% extends 'map_base.html' %}
 
   {% block dependencies %}
+  <link rel="stylesheet" href="/static/jquery.fileupload.css">
   <script src="/static/upload/vendor/jquery.ui.widget.js"></script>
   <script src="/static/upload/jquery.iframe-transport.js"></script>
   <script src="/static/upload/jquery.fileupload.js"></script>
   {% endblock %}
 
+  {% block initialize_map %}
+      var mapOptions = {
+        {% with center=trip.get_center %}
+        center: new google.maps.LatLng({{center.0}}, {{center.1}}),
+        {% endwith %}
+            zoom: 6,
+            mapTypeId: google.maps.MapTypeId.TERRAIN,
+            mapTypeControl: false,
+            panControl: true,
+            zoomControl: true,
+            streetViewControl: false
+          };
+          map = new google.maps.Map($("#map-canvas")[0], mapOptions);
+  {% endblock %}
+
   {% block initialize_script %}
+  {% load imagekit %}
+  var loc,marker;
+  var pathArr = [];
+  {% for p in trip.pins %}
+    loc = new google.maps.LatLng({{p.location.lat}},{{p.location.lon}})
+    marker = new google.maps.Marker({ 
+      position: loc,
+      icon : { url : '/static/pin_2.svg',
+        scaledSize : new google.maps.Size(30,45,'px','px'),
+        size : new google.maps.Size(30,45,'px','px') }
+      });
+    marker.setMap(map);
+    {% if p.tracks %}
+      pathArr.push(loc);
+    {% endif %}
+  {% endfor %}
+
 	var searchbox = new google.maps.places.Autocomplete(document.getElementById("id_loc_name"));
 
 	google.maps.event.addListener(searchbox, 'place_changed', function() {
@@ -27,17 +60,19 @@
 	  $("input").addClass("form-control")
     $("textarea").addClass("form-control")
     $("#id_trip").addClass("form-control")
+    $(".btn").removeClass("form-control")
 
     $("#id_date").datepicker();
 
     $('#fileupload').fileupload({
         dataType: 'json',
         done: function (e, data) {
+            $("#empty-message").hide()
             $.each(data.result, function (index, file) {
                 if (file.hasOwnProperty('error')){
                   $('<p/>').text(file.error).appendTo("#uploaded");
                 } else {
-                  $('<p/>').text(file.name).appendTo("#uploaded");
+                  $('<img/>').attr('src',file.url).addClass("thumbnail").appendTo("#uploaded");
                   $('<input type="hidden" />')
                     .attr('name','uploads')
                     .attr('value',file.id)
@@ -62,12 +97,19 @@
       {{form.lon.errors}}{{ form.lon }}
       <div class="form-group">{{form.name.errors}}{{ form.name }}</div>
       <div class="form-group">{{form.loc_name.errors}}{{ form.loc_name }}</div>
-      <div class="form-group">{{form.date.errors}}{{ form.date }}</div>
-      <div class="form-group" id="uploaded"> </div>
-      <div class="form-group form-inline"><label class="control-label">{{form.tracks.errors}}{{ form.tracks }} make tracks? </label></div>
-      <input id="fileupload" type="file" name="files[]" data-url="/file_upload" multiple>
+      <div class="form-group form-inline">
+          {{form.date.errors}}{{ form.date }} &nbsp;&nbsp;
+          <label class="control-label">{{form.tracks.errors}}{{ form.tracks }} make tracks? </label>
+      </div>
+      <div class="form-group thumbnail-box">
+      <div id="uploaded"> 
+        <p class="blurb" id="empty-message"> No memories yet..</p></div>
+      <span class="btn btn-default fileinput-button"> Add Files
+        <input id="fileupload" type="file" name="files[]" data-url="/file_upload" multiple>
+      </span>
+    </div>
       <div class="form-group">{{form.description.errors}}{{ form.description }}</div>
-	<input type="submit" class="btn btn-default" value="Create" />
+	<input type="submit" class="btn btn-info" value="Create" />
 	</form>
   </div>
   {% endblock %}

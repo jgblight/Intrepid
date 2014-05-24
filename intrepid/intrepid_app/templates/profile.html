@@ -20,9 +20,25 @@
     {% if profile_user.profile.hometown.name %}
 		var marker = new google.maps.Marker({	
 				position: loc,
+        icon : { url : '/static/pin_2.svg',
+            scaledSize : new google.maps.Size(30,45,'px','px'),
+            size : new google.maps.Size(30,45,'px','px') }
 			});
 		marker.setMap(map);
     {% endif %}
+    {% for trip in profile_user.trip_set.all %}
+    {% for pin in trip.pins %}
+      loc = new google.maps.LatLng({{pin.location.lat}},{{pin.location.lon}})
+      marker = new google.maps.Marker({ 
+        position: loc,
+        icon : { url : '/static/pin_2.svg',
+            scaledSize : new google.maps.Size(26,39,'px','px'),
+            size : new google.maps.Size(26,39,'px','px') }
+      });
+      marker.setMap(map);
+    {% endfor %}
+    {% endfor %}
+
 {% endblock %}
 
 {% block content %}

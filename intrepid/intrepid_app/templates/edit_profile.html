@@ -55,6 +55,9 @@
         var loc = new google.maps.LatLng({{user.profile.hometown.lat}},{{user.profile.hometown.lon}});
         var marker = new google.maps.Marker({ 
           position: loc,
+          icon : { url : '/static/pin_2.svg',
+            scaledSize : new google.maps.Size(26,39,'px','px'),
+            size : new google.maps.Size(26,39,'px','px') }
         });
         marker.setMap(map);
         map.setCenter(loc);
@@ -87,11 +90,7 @@
 
   {% block content %}
   	<div class="insert-holder">
-      {% if user.profile.image %}
-      <img class="insert-image" src="{{user.profile.image.url}}" id="photo"/>
-      {% else %}
-      <img class="insert-image" src="http://placekitten.com/500/500" id="photo"/>
-      {% endif %}
+      <img class="insert-image" src="{{user.profile.get_image_url}}" id="photo"/>
     </div>
   	<form action="/profile/{{user.username}}/edit" enctype="multipart/form-data" method="post">{% csrf_token %}
       {{ form.non_field_errors }}

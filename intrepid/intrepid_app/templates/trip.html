@@ -17,7 +17,9 @@
 		$("#trip-image-div").removeClass("show-pin-image").addClass("show-trip-image");
 		$("#pin-info").hide();
 		$("#trip-info").show();
-		map.setCenter(new google.maps.LatLng({{center_lat}}, {{center_lon}}));
+		{% with center=trip.get_center %}
+		map.setCenter(new google.maps.LatLng({{center.0}}, {{center.1}}));
+		{% endwith %}
 		map.setZoom(6);
 	}
 
@@ -48,27 +50,13 @@
 		map.setZoom(8);
 		showPin();
 	};
-
-{% endblock %}
-
-{% block initialize_map %}
-		var mapOptions = {
-		  center: new google.maps.LatLng({{center_lat}}, {{center_lon}}),
-          zoom: 6,
-          mapTypeId: google.maps.MapTypeId.TERRAIN,
-          mapTypeControl: false,
-          panControl: true,
-          zoomControl: true,
-          streetViewControl: false
-        };
-        map = new google.maps.Map($("#map-canvas")[0], mapOptions);
 {% endblock %}
 
 {% block initialize_script %}
 
         var loc,marker;
         var pathArr = [];
-        {% for p in pins %}
+        {% for p in trip.pins %}
         	loc = new google.maps.LatLng({{p.location.lat}},{{p.location.lon}})
 			marker = new google.maps.Marker({	
 				position: loc,
@@ -109,7 +97,9 @@
 
 		$("#slides").slidesjs({
     		width: 200,
-    		height: 200
+    		height: 200,
+    		navigation: {active:false, effect:"fade"},
+    		pagination: {active:false},
     	});
 
 		showTrip();
@@ -140,7 +130,10 @@
 	  		</div>
 
 	  		<div id="slides" class="insert-holder slides">
-	  			<img src="http://placekitten.com/200/200">
+	  			<img src="#">
+	  			<a href="#" class="slidesjs-previous slidesjs-navigation navigation"><span class="glyphicon glyphicon-chevron-left"></span></a>
+
+	  			<a href="#" class="slidesjs-next slidesjs-navigation navigation"><span class="glyphicon glyphicon-chevron-right"></span></a>
   			</div>
 
   			<div class="blurb" id="pin-blurb"> </div>

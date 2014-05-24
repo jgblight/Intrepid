@@ -6,7 +6,7 @@
 {{ message }}
 <form action="login" method="post">{% csrf_token %}
 {{ form|bootstrap_horizontal }}
-<input type="submit" class="btn btn-default" value="Login" />
+<input type="submit" class="btn btn-info" value="Login" />
 <input type="hidden" name="next" value="{{ next }}" />
 <p class="blurb"> or <a href="/signup"> Sign up </a></p>
 </div>

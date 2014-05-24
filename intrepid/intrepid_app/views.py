@@ -8,7 +8,6 @@ from django.contrib.auth.decorators import login_required
 from intrepid_app.models import Profile,Trip, Pin,Location,Media,Image
 from django.http import HttpResponse
 import forms
-import sys
 
 @login_required
 def index_view(request):
@@ -19,22 +18,8 @@ def index_view(request):
 
 def trip_view(request,trip_id):
     trip = get_object_or_404(Trip, pk=trip_id)
-    pins = trip.pins()
-
-    center_lat = 0.0;
-    center_lon = 0.0;
-    if len(pins):
-        for p in pins:
-            center_lat += p.location.lat
-            center_lon += p.location.lon
-        center_lat /= len(pins)
-        center_lon /= len(pins)
-
     return render(request, 'trip.html', {
-        'trip' : trip,
-        'pins' : pins,
-        'center_lat' : center_lat,
-        'center_lon' : center_lon
+        'trip' : trip
         })
 
 def profile_view(request,username):
@@ -125,20 +110,26 @@ def new_post_view(request,trip_id):
 
 def file_upload_view(request):
     if request.method == "POST":
-        new_file = request.FILES[u'files[]']
-        try:
-            media = Image(media=new_file)
-            media.save()
-            result = [{'id':media.id,
-                        'name':new_file.name},]
-        except TypeError as e:
-            print e
-            result = [{"error":"Please upload a valid image"}]
+        files = request.FILES[u'files[]']
+        if type(files) is not list:
+            files = [files]
+
+        result = []
+        for new_file in files:
+            content_type = new_file.content_type.split("/")[0]
+            if content_type == "image":
+                media = Image(media=new_file)
+                media.save()
+                result.append({'id':media.id,
+                            'name':new_file.name,
+                            'url':media.pin_display.url})
+            else:
+                result.append({"error" : new_file.name + " is not a valid image"})
 
         response_data = simplejson.dumps(result)
         return HttpResponse(response_data, mimetype='application/json')
     else:
-        pass #return
+        pass #return 404
 
 @login_required
 def edit_profile_view(request,username):
