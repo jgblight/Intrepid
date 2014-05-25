@@ -105,6 +105,9 @@
 			google.maps.event.addListener(marker, 'click', function() {
 				pinInfo({{ forloop.counter0 }});
 			});
+			$("#pin_{{p.id}}").click(function(){
+				pinInfo({{ forloop.counter0 }});
+			});
         {% endfor %}
 		
 		poly = new google.maps.Polyline({
@@ -123,6 +126,7 @@
     	});
 
 		$("#trip-name").click(showTrip);
+		$("#trip-image-div").click(showTrip);
 
 		{% if post %}
 			pinInfo({{post}});
@@ -133,22 +137,32 @@
 {% endblock %}
 
 {% block content %}
-  	<div id="trip-image-div"> 
-  		<img id="trip-image" src="{{trip.get_image_url}}" />\
+  	<div id="trip-image-div" class="hover"> 
+  		<img id="trip-image" src="{{trip.get_image_url}}" />
   	</div>
 
   	<div id="trip-pane">
 	  	<div id="trip-info">
 	  		<div class="header-div">
-		  	<p class="minor-text link-item" href="/profile/{{trip.user.username}}">{{trip.user.profile.get_name}}</p>
+		  	<p class="minor-text link hover link-item" href="/profile/{{trip.user.username}}">{{trip.user.profile.get_name}}</p>
 	  		<h2 class="title-text">{{trip.name}}</h2>
 	  		<p class="minor-text"> {{trip.start}} - {{trip.end}}</p>
 	  		</div>
 	  		<div class="blurb">{{trip.text}}</div>
+	  		<div class="item-list">
+	  		<h3 class="subtitle">Pins</h3>
+	  		{% for p in trip.pins %}
+		  		<div class="item hover" id="pin_{{p.id}}">
+		  		<img class="pin-item-img" src="{{p.thumbnail_url}}">
+		        <p class="item-main pin-main">{{p.name}} <span class="tiny-text">{{p.pin_date.date}}</span></p>
+		        </div>
+	  		{% endfor %}
+    		<a class="btn btn-primary" href="/trip/{{trip.id}}/post">New Pin</a>
+	  		</div>
 	  	</div>
 	  	<div id="pin-info">
 	  		<div class="header-div">
-	  		<p class="subtitle hover" id="trip-name"> {{trip.name}} </p>
+	  		<p class="subtitle link hover" id="trip-name"> {{trip.name}} </p>
 	  		<h2 class="title-text" id="pin-title"></h2>
 	  		<p class="minor-text" id="pin-location"> </p>
 	  		<p class="minor-text" id="pin-date"> </p>

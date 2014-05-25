@@ -105,6 +105,13 @@ class Pin(models.Model):
     tracks = models.BooleanField(default=False)
     text = models.TextField()
 
+    def thumbnail_url(self):
+        if self.media_set.count() > 0:
+            img = self.media_set.first()
+            return img.image.pin_display.url
+        else:
+            return "http://placekitten.com/100/100"
+
 class Media(models.Model):
     pin = models.ForeignKey(Pin,blank=True,null=True)
     caption = models.CharField(max_length=200,blank=True)

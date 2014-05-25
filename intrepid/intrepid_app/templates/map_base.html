@@ -64,16 +64,16 @@
 
 <div class="container fill width-fill">
 <div class="row header">
-  <div class="col-xs-2 col-sm-2">
-    <h2 class="logo link-item" href="/"> Intrepid </h2>
+  <div class="col-xs-3 col-sm-3">
+    <h2 class="logo link-item" href="/"> Intrepid</h2>
   </div>
 
-  <div class="col-xs-10 col-sm-10  header-right">
+  <div class="col-xs-9 col-sm-9  header-right">
   {% if user.is_authenticated %}
     <img class="header-icon link-item" href="/profile/{{user.username}}" src="{{user.profile.get_image_url}}"/>
     <div class="dropdown header-button-wrapper">
       <span class="btn btn-primary dropdown-toggle" id="dLabel" data-toggle="dropdown" > 
-       <span class="glyphicon glyphicon-pencil"></span> New Post</span>
+       <span class="glyphicon glyphicon-pencil"></span> New Pin</span>
     <ul class="dropdown-menu right-menu" role="menu" aria-labelledby="dLabel">
       {% for trip in user.trip_set.all %}
       <li class="drop-link"> <a href="/trip/{{trip.id}}/post"> {{trip.name}} </a> </li>
@@ -85,7 +85,6 @@
       <a href="/logout" class="btn btn-info" > Log Out</a>
     </div>
   {% else %}
-    </div>
     <div class="header-button-wrapper">
       <a href="/login" class="btn btn-info" > Log In</a>
     </div>

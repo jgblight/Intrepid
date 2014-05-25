@@ -119,10 +119,11 @@
 
 	.logo {
 		font-family : 'Josefin Slab', serif ;
-		text-align: center;
+		text-align: left;
 		color : #FFFFFF ;
 		font-size :  30px;
 		margin: 5px ;
+		margin-left: 15px;
 
 	}
 
@@ -151,6 +152,17 @@
 		padding : 5px ;
 	}
 
+	.tiny-text {
+		font-family : 'Raleway', sans-serif ;
+		color : #666666 ;
+		font-size: 9pt ;
+		margin : 4px;
+	}
+
+	.link {
+		color : #428bca;
+	}
+
 	.control-label {
 		font-family : 'Raleway', sans-serif ;
 		color : #2A2C31 ;
@@ -174,32 +186,47 @@
 		margin-bottom: 5px ;
 	}
 
-	.trip-list {
+	.item-list {
 		text-align : left ;  
 		margin-left : 10% ; 
 		margin-right : 10% ;
 		padding : 0px ;
 	}
 
-	.trip-item {
-		margin : 0px ;
+	.item {
+		margin : 0px;
 		margin-bottom: 3px;
-		padding : 0px ;
-		padding-bottom: 5px ;
+		padding : 0px;
 		border : 1px solid #CCCCCC;
 	}
 
-
-	.trip-item:hover {
+	.item:hover {
 		background-color : #EEEEEE ;
 	}
 
-	.trip-link {
+	.trip-item {
+		padding-bottom: 5px ;
+	}
+
+	.item-main {
 		font-family : 'Raleway', sans-serif ;
 		color : #2A2C31 ;
 		font-size: 13pt ;
 		margin-left: 10px ;
 		margin-top: 3px;
+	}
+
+	.pin-main {
+		display : inline-block;
+		margin-bottom: 3px;
+	}
+
+	.pin-item-img {
+		height : 35px;
+		width : 35px;
+		margin: 0;
+		padding: 0;
+		display: inline-block;
 	}
 
 	.edit-button {
