@@ -1,7 +1,9 @@
 {% extends "map_base.html" %}
 
 {% block dependencies %}
+<link href='/static/popup.css' rel='stylesheet' type='text/css'>
 <script src="/static/jquery.slides.js"></script>
+<script src="/static/popup.js"></script>
 {% endblock %}
 
 {% block script_functions %}
@@ -30,9 +32,11 @@
 		pin_div.find("#pin-date").html(info.date);
 		pin_div.find("#pin-blurb").html(info.blurb);
 		if ( info.media.length > 0 ) {
+			var items = [];
 			$(".slidesjs-control").empty();
 			for (var i = 0; i < info.media.length; i++) {
-				$("<img />").attr("src",info.media[i].url).addClass('insert-image').appendTo(".slidesjs-control");
+				$("<img />").attr("src",info.media[i].previewUrl).addClass('insert-image').appendTo(".slidesjs-control");
+				items.push({'src':info.media[i].url});
 			}
 			$("#slides").slidesjs('refresh');
 			$("#slides").show();
@@ -42,6 +46,14 @@
 			else {
 				$(".slidesjs-navigation").show();
 			}
+			$('.insert-image').magnificPopup({
+			    items: items,
+			    gallery: {
+			      enabled: true
+			    },
+			    type: 'image' // this is default type
+			});
+
 		}
 		else {
 			pin_div.find("#slides").hide();
@@ -79,7 +91,8 @@
 					lon : {{p.location.lon}},
 					media : [
 					{% for m in p.media_set.all %}
-						{ url : "{{ m.image.pin_display.url }}" },
+						{ previewUrl : "{{ m.image.pin_display.url }}",
+						  url : "{{ m.image.media.url }}" },
 					{% endfor %}
 					]
 				};

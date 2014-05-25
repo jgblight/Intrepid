@@ -38,7 +38,8 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'bootstrapform',
     'imagekit',
-    'intrepid_app'
+    'intrepid_app',
+    'intrepid_app.templatetags.tags'
 )
 
 MIDDLEWARE_CLASSES = (
