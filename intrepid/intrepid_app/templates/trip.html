@@ -1,12 +1,31 @@
 {% extends "map_base.html" %}
 
 {% block dependencies %}
-<link href='/static/popup.css' rel='stylesheet' type='text/css'>
-<script src="/static/jquery.slides.js"></script>
-<script src="/static/popup.js"></script>
+<link href='/static/css/popup.css' rel='stylesheet' type='text/css'>
+<script src="/static/js/jquery.slides.js"></script>
+<script src="/static/js/popup.js"></script>
 {% endblock %}
 
 {% block script_functions %}
+	var pins = [
+	{% for p in trip.pins %}
+		{ 
+		name : "{{ p.name }}",
+		blurb : "{{ p.text|linebreaksbr }}",
+		location : "{{ p.location.name }}",
+		date : "{{ p.pin_date.date }}",
+		lat : {{p.location.lat}},
+		lon : {{p.location.lon}},
+		media : [
+		{% for m in p.media_set.all %}
+			{ previewUrl : "{{ m.image.pin_display.url }}",
+			  url : "{{ m.image.media.url }}" },
+		{% endfor %}
+		]
+		},
+	{% endfor %}
+	];
+
 	function showPin() {
 		$("#trip-pane").removeClass("show-trip-pane").addClass("show-pin-pane");
 		$("#trip-image-div").removeClass("show-trip-image").addClass("show-pin-image");
@@ -25,7 +44,8 @@
 		map.setZoom(6);
 	}
 
-	function pinListener(info) {
+	function pinInfo(index) {
+		var info = pins[index];
 		var pin_div = $("#pin-info");
 		pin_div.find("#pin-title").html(info.name);
 		pin_div.find("#pin-location").html(info.location);
@@ -35,24 +55,25 @@
 			var items = [];
 			$(".slidesjs-control").empty();
 			for (var i = 0; i < info.media.length; i++) {
-				$("<img />").attr("src",info.media[i].previewUrl).addClass('insert-image').appendTo(".slidesjs-control");
-				items.push({'src':info.media[i].url});
+				$("<img />").attr("src",info.media[i].previewUrl).attr("href",info.media[i].url).addClass('insert-image').appendTo(".slidesjs-control");
 			}
-			$("#slides").slidesjs('refresh');
 			$("#slides").show();
-			if (info.media.length == 1) {
-				$(".slidesjs-navigation").hide();
-			}
-			else {
+			if (info.media.length > 1) {
+
+				$("#slides").slidesjs('refresh');
 				$(".slidesjs-navigation").show();
-			}
-			$('.insert-image').magnificPopup({
-			    items: items,
-			    gallery: {
-			      enabled: true
-			    },
+				$('.slidesjs-control').magnificPopup({
+				    delegate: 'img',
+				    gallery: {
+				      enabled: true
+				    },
 			    type: 'image' // this is default type
 			});
+			}
+			else {
+				$(".slidesjs-navigation").hide();
+				$(".insert-image").magnificPopup();
+			}
 
 		}
 		else {
@@ -82,21 +103,7 @@
 			{% endif %}
 
 			google.maps.event.addListener(marker, 'click', function() {
-				var info = { 
-					name : "{{ p.name }}",
-					blurb : "{{ p.text|linebreaksbr }}",
-					location : "{{ p.location.name }}",
-					date : "{{ p.pin_date.date }}",
-					lat : {{p.location.lat}},
-					lon : {{p.location.lon}},
-					media : [
-					{% for m in p.media_set.all %}
-						{ previewUrl : "{{ m.image.pin_display.url }}",
-						  url : "{{ m.image.media.url }}" },
-					{% endfor %}
-					]
-				};
-				pinListener(info);
+				pinInfo({{ forloop.counter0 }});
 			});
         {% endfor %}
 		
@@ -115,8 +122,13 @@
     		pagination: {active:false},
     	});
 
-		showTrip();
 		$("#trip-name").click(showTrip);
+
+		{% if post %}
+			pinInfo({{post}});
+		{% else %}
+			showTrip();
+		{% endif %}
 
 {% endblock %}
 
@@ -136,7 +148,7 @@
 	  	</div>
 	  	<div id="pin-info">
 	  		<div class="header-div">
-	  		<p class="subtitle" id="trip-name"> {{trip.name}} </p>
+	  		<p class="subtitle hover" id="trip-name"> {{trip.name}} </p>
 	  		<h2 class="title-text" id="pin-title"></h2>
 	  		<p class="minor-text" id="pin-location"> </p>
 	  		<p class="minor-text" id="pin-date"> </p>

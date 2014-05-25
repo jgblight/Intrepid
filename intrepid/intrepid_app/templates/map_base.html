@@ -5,15 +5,15 @@
 	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
   <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/cupertino/jquery-ui.css" />
   <link href='http://fonts.googleapis.com/css?family=Josefin+Slab:400,600|Raleway' rel='stylesheet' type='text/css'>
-  <link rel="stylesheet" href="/static/jquery.drag-n-crop.css">
-	<link rel="stylesheet" href="/static/intrepid.css">
+  <link rel="stylesheet" href="/static/css/jquery.drag-n-crop.css">
+	<link rel="stylesheet" href="/static/css/intrepid.css">
 
   <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
   <script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
   <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/3.0.4/jquery.imagesloaded.min.js"></script>
-  <script src="/static/scale.fix.js"></script>
-  <script src='/static/jquery.drag-n-crop.js'></script> 
+  <script src="/static/js/scale.fix.js"></script>
+  <script src='/static/js/jquery.drag-n-crop.js'></script> 
 	<script type="text/javascript"
 	      src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDml8K6lGP_FoE7gH8ffhCAdN8Dkltf1as&libraries=places&sensor=false">
   </script>
@@ -68,18 +68,26 @@
     <h2 class="logo link-item" href="/"> Intrepid </h2>
   </div>
 
-  <div class="col-xs-2 col-xs-offset-8 col-sm-2 col-sm-offset-8 header-right">
+  <div class="col-xs-10 col-sm-10  header-right">
   {% if user.is_authenticated %}
     <img class="header-icon link-item" href="/profile/{{user.username}}" src="{{user.profile.get_image_url}}"/>
-    <div class="dropdown header-icon-wrapper">
-      <img id="dLabel" class="header-icon dropdown-toggle" data-toggle="dropdown"  src="/static/white_pin.svg" />
+    <div class="dropdown header-button-wrapper">
+      <span class="btn btn-primary dropdown-toggle" id="dLabel" data-toggle="dropdown" > 
+       <span class="glyphicon glyphicon-pencil"></span> New Post</span>
     <ul class="dropdown-menu right-menu" role="menu" aria-labelledby="dLabel">
-      <li class="drop-link drop-link-bold">New Post </li>
       {% for trip in user.trip_set.all %}
       <li class="drop-link"> <a href="/trip/{{trip.id}}/post"> {{trip.name}} </a> </li>
       {% endfor %}
       <li class="drop-link"> <a href="/trip/new"> New Trip </a> </li>
     </ul>
+    </div>
+    <div class="header-button-wrapper">
+      <a href="/logout" class="btn btn-info" > Log Out</a>
+    </div>
+  {% else %}
+    </div>
+    <div class="header-button-wrapper">
+      <a href="/login" class="btn btn-info" > Log In</a>
     </div>
   {% endif %}
   </div>

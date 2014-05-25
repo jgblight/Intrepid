@@ -58,6 +58,7 @@
         var $element=$(this.element);
         var _this = this;
         this.data = $.data(this);
+        $.data(this, "current", this.options.start - 1);
         $(this.element).find(".slidesjs-pagination-item").remove();
         $.data(this, "total", $(".slidesjs-control", $element).children().not(".slidesjs-navigation", $element).length);
         $.each($(".slidesjs-control", $element).children(), function(i) {

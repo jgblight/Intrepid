@@ -1,7 +1,7 @@
 {% extends "map_base.html" %}
 
 {% block dependencies %}
-  <script src='/static/filestyle.js'></script> 
+  <script src='/static/js/filestyle.js'></script> 
 {% endblock %}
 
 {% block script_functions %}
@@ -44,7 +44,8 @@ function readURL(input) {
     $("#id_image").filestyle({
       input: false,
       buttonText: "Choose header image",
-
+      buttonName: "btn-default btn-file",
+      iconName: "glyphicon-camera"
       });
     $("#id_image").change(function(){
       readURL(this);

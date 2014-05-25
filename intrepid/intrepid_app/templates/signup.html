@@ -5,7 +5,9 @@
 <div class="center-block-logo">
 <form action="signup" method="post">{% csrf_token %}
 {{ form|bootstrap_horizontal }}
+<div class="form-group">
 <input type="submit" class="btn btn-info" value="Sign Up" />
+</div>
 <p class="blurb"> or <a href="/login"> Log in </a></p>
 </div>
 {% endblock %}

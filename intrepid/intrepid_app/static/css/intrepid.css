@@ -16,6 +16,19 @@
 		font-size : 0.7em;
 	}
 
+	.bootstrap-filestyle {
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+	.inline-group {
+		display: inline-block;
+	}
+
+	.btn-file {
+		background-color: #F1F7F8;
+	}
+
 	.splash-page {
 		background-color: #363535;
 	}
@@ -32,7 +45,7 @@
 
 	.main {
 		position: absolute;
-    	top : 40px ;
+    	top : 44px ;
     	bottom : 0px ;
 		margin : 0 ;
 		padding : 0 ;
@@ -40,14 +53,15 @@
 
 	.header {
 		background-color: #363535 ;
-		height : 40px ; 
+		height : 44px ; 
 	}
 
 	.info-div { 	
 		text-align: center ;
 		background-color: #FFFFFF;
 		border-left : 1px solid #CCCCCC;
-		overflow: auto ;
+		overflow-y: auto;
+		overflow-x: hidden;
 		}
 
 	.header-div {
@@ -73,11 +87,21 @@
 		height : auto;
 	}
 
+	.slides:hover {
+		cursor : pointer;
+	}
+
+	.hover:hover {
+		cursor: pointer;
+	}
+
 	.form-group {
 		font-family : 'Raleway', sans-serif ;
 		width : 80% ;
 		margin-left: auto ;
 		margin-right: auto ;
+		margin-top: 15px ;
+		margin-bottom: 15px ;
 	}
 	.title-text {
 		font-family : 'Josefin Slab', serif ;
@@ -211,13 +235,9 @@
 	}
 
 	.header-right {
-		text-align: right ;
-		padding-right: 30px;
-	}
+		text-align: right ;	}
 
-	.header-icon-wrapper {
-		max-width : 36px ;
-		margin: 2px ;
+	.header-button-wrapper {
 		margin-left: 5px ;
 		margin-right: 5px ;
 		display: inline-block;
@@ -227,6 +247,8 @@
 		display: inline-block;
 		width: 36px ;
 		height: 36px ;
+		margin-left: 5px ;
+		margin-right: 5px ;
 	}
 
 	.drop-link {
@@ -272,6 +294,10 @@
 		height : 100px;
 		display : inline-block;
 		margin : 3px;
+	}
+
+	.thumbnail-box {
+		border : 1px ;
 	}
 
 	.navigation {

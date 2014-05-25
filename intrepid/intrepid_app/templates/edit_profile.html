@@ -1,5 +1,9 @@
 {% extends "map_base.html" %}
 
+{% block dependencies %}
+  <script src='/static/js/filestyle.js'></script> 
+{% endblock %}
+
   {% block script_functions %}
     function readURL(input) {
             if (input.files && input.files[0]) {
@@ -34,9 +38,16 @@
   {% block initialize_script %}
       $("input").addClass("form-control")
       $("textarea").addClass("form-control")
+      $(".btn").removeClass("form-control")
     
       $("#id_image").change(function(){
           readURL(this);
+      });
+      $("#id_image").filestyle({
+      input: false,
+      buttonText: "Choose profile image",
+      buttonName: "btn-default btn-file",
+      iconName: "glyphicon-camera"
       });
 
       {% if user.first_name %}
@@ -89,6 +100,7 @@
   {% endblock %}
 
   {% block content %}
+  {% load tags %}
   	<div class="insert-holder">
       <img class="insert-image" src="{{user.profile.get_image_url}}" id="photo"/>
     </div>
@@ -98,11 +110,11 @@
       {{ form.image_y }}
       {{ form.lat }}
       {{ form.lon }}
-      <div class="form-group"> {{ form.image.errors }}{{ form.image }} </div>
-      <div class="form-group form-inline"> {{ form.first_name }} {{ form.last_name }} </div>
-      <div class="form-group"> {{ form.hometown_name }} </div>
-      <div class="form-group"> {{ form.text }} </div>
+      {% field form.image %}
+      <div class="form-inline"> {% field_inline form.first_name %} {% field_inline form.last_name %} </div>
+      {% field form.hometown_name %}
+      {% field form.text %}
 
-    <input type="submit" class="btn btn-default" value="Save" />
+    <input type="submit" class="btn btn-info" value="Save" />
 
   {% endblock %}

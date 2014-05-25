@@ -14,13 +14,17 @@ def index_view(request):
     if request.user.is_authenticated():
         return redirect('/profile/' + str(request.user.username))
     else:
-        return redirect('/login')
+        return redirect('/signup')
 
 def trip_view(request,trip_id):
     trip = get_object_or_404(Trip, pk=trip_id)
-    return render(request, 'trip.html', {
-        'trip' : trip
-        })
+    content = { 'trip' : trip }
+    if request.GET.has_key('post'):
+        if request.GET['post'] == 'last':
+            content['post'] = trip.pin_set.count() - 1
+        else:
+            content['post'] = request.GET['post']
+    return render(request, 'trip.html', content)
 
 def profile_view(request,username):
     return render(request, 'profile.html', {
@@ -100,7 +104,7 @@ def new_post_view(request,trip_id):
                 media = Media.objects.get(pk=int(media_id))
                 media.pin = pin
                 media.save()
-            return redirect('/trip/'+str(trip_id)) 
+            return redirect('/trip/'+str(trip_id)+'?post=last') 
     else:
         form = forms.NewPostForm()
     return render(request, 'new_post.html', {

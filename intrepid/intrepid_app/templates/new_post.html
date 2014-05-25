@@ -1,10 +1,10 @@
 {% extends 'map_base.html' %}
 
   {% block dependencies %}
-  <link rel="stylesheet" href="/static/jquery.fileupload.css">
-  <script src="/static/upload/vendor/jquery.ui.widget.js"></script>
-  <script src="/static/upload/jquery.iframe-transport.js"></script>
-  <script src="/static/upload/jquery.fileupload.js"></script>
+  <link rel="stylesheet" href="/static/css/jquery.fileupload.css">
+  <script src="/static/js/upload/vendor/jquery.ui.widget.js"></script>
+  <script src="/static/js/upload/jquery.iframe-transport.js"></script>
+  <script src="/static/js/upload/jquery.fileupload.js"></script>
   {% endblock %}
 
   {% block initialize_map %}
@@ -57,34 +57,40 @@
     markerArray.push(marker);
 	});	
 
-	  $("input").addClass("form-control")
-    $("textarea").addClass("form-control")
-    $("#id_trip").addClass("form-control")
-    $(".btn").removeClass("form-control")
+  $("input").addClass("form-control")
+  $("textarea").addClass("form-control")
+  $("#id_trip").addClass("form-control")
+  $(".btn").removeClass("form-control")
 
-    $("#id_date").datepicker();
+  $("#id_date").datepicker();
 
-    $('#fileupload').fileupload({
-        dataType: 'json',
-        done: function (e, data) {
-            $("#empty-message").hide()
-            $.each(data.result, function (index, file) {
-                if (file.hasOwnProperty('error')){
-                  $('<p/>').text(file.error).appendTo("#uploaded");
-                } else {
-                  $('<img/>').attr('src',file.url).addClass("thumbnail").appendTo("#uploaded");
-                  $('<input type="hidden" />')
-                    .attr('name','uploads')
-                    .attr('value',file.id)
-                    .appendTo('#post_form')
-                }
-            });
-        }
-    });
+  $('#fileupload').fileupload({
+      dataType: 'json',
+      done: function (e, data) {
+          $("#empty-message").hide()
+          $.each(data.result, function (index, file) {
+              if (file.hasOwnProperty('error')){
+                $('<p/>').text(file.error).appendTo("#uploaded");
+              } else {
+                $('<img/>').attr('src',file.url).addClass("thumbnail").appendTo("#uploaded");
+                $('<input type="hidden" />')
+                  .attr('name','uploads')
+                  .attr('value',file.id)
+                  .appendTo('#post_form')
+              }
+          });
+      }
+  });
+
+  $("#post_form").submit(function(e){
+    if ($('#id_loc_name:focus').length){
+      e.preventDefault();
+    }
+  });
   {% endblock %}
 
   {% block content %}
-  {% load bootstrap %}
+  {% load tags %}
   <div id="trip-image-div" class="show-pin-image">
       <img id="trip-image" src="{{trip.get_image_url}}" />
   </div> 
@@ -92,23 +98,22 @@
     <p class="subtitle" id="trip-name"> {{trip.name}} </p>
   	<h3 class="title-text"> New Post </h3>
 	<form id="post_form" action="/trip/{{trip.id}}/post" enctype="multipart/form-data" method="post">{% csrf_token %}
-	  {{ form.non_field_errors }}
-      {{form.lat.errors}}{{ form.lat }}
-      {{form.lon.errors}}{{ form.lon }}
-      <div class="form-group">{{form.name.errors}}{{ form.name }}</div>
-      <div class="form-group">{{form.loc_name.errors}}{{ form.loc_name }}</div>
-      <div class="form-group form-inline">
-          {{form.date.errors}}{{ form.date }} &nbsp;&nbsp;
-          <label class="control-label">{{form.tracks.errors}}{{ form.tracks }} make tracks? </label>
+      {{ form.lat }}
+      {{ form.lon }}
+      {% field form.name %}
+      {% field form.loc_name %}
+      <div class="form-inline">
+       {% field_inline form.date %} &nbsp;&nbsp;
+        <label class="control-label">{{ form.tracks }} make tracks? </label>
       </div>
       <div class="form-group thumbnail-box">
       <div id="uploaded"> 
-        <p class="blurb" id="empty-message"> No memories yet..</p></div>
-      <span class="btn btn-default fileinput-button"> Add Files
+        <p class="blurb" id="empty-message"> No images yet..</p></div>
+      <span class="btn btn-default btn-file fileinput-button"> Add Files
         <input id="fileupload" type="file" name="files[]" data-url="/file_upload" multiple>
       </span>
     </div>
-      <div class="form-group">{{form.description.errors}}{{ form.description }}</div>
+    {% field form.description %}
 	<input type="submit" class="btn btn-info" value="Create" />
 	</form>
   </div>
