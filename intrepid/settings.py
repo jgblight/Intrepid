@@ -113,8 +113,7 @@ DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 AWS_ACCESS_KEY_ID = 'AKIAITANZ7IO6FUREREQ'
 AWS_SECRET_ACCESS_KEY = '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'
 AWS_STORAGE_BUCKET_NAME = 'intrepid-jgblight'
-STATIC_URL = '//s3.amazonaws.com/%s/' % AWS_STORAGE_BUCKET_NAME
-ADMIN_MEDIA_PREFIX = STATIC_URL + 'admin/'
+MEDIA_URL = '//s3.amazonaws.com/%s/' % AWS_STORAGE_BUCKET_NAME
 
 try:
     from settings_local import *
