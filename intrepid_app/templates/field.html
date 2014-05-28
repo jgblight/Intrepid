@@ -1,0 +1,6 @@
+<div class="{{ div_class}} {% if field.errors %} has-error{% endif %}"> 
+    {{ field }} 
+    {% for error in field.errors %}
+        <span class="help-block">{{ error }}</span>
+    {% endfor %}
+</div>
