@@ -55,3 +55,4 @@ intrepid/media/*
 # Sphinx documentation
 docs/_build/
 
+intrepid/settings_local.py
