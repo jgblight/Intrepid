@@ -97,6 +97,12 @@
 
       $('#photo').dragncrop();
 
+      $("#profile_form").submit(function(e){
+      if ($('#id_hometown_name:focus').length){
+        e.preventDefault();
+      }
+      });
+
   {% endblock %}
 
   {% block content %}
@@ -104,7 +110,7 @@
   	<div class="insert-holder">
       <img class="insert-image" src="{{user.profile.get_image_url}}" id="photo"/>
     </div>
-  	<form action="/profile/{{user.username}}/edit" enctype="multipart/form-data" method="post">{% csrf_token %}
+  	<form action="/profile/{{user.username}}/edit" id="profile_form" enctype="multipart/form-data" method="post">{% csrf_token %}
       {{ form.non_field_errors }}
       {{ form.image_x }}
       {{ form.image_y }}
