@@ -37,6 +37,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'dj_database_url',
+    'storages',
     'bootstrapform',
     'imagekit',
     'intrepid_app',
@@ -106,6 +107,14 @@ MEDIA_URL = '/media/'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 )
+
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+#STATICFILES_STORAGE = DEFAULT_FILE_STORAGE
+AWS_ACCESS_KEY_ID = 'AKIAITANZ7IO6FUREREQ'
+AWS_SECRET_ACCESS_KEY = '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'
+AWS_STORAGE_BUCKET_NAME = 'intrepid-jgblight'
+STATIC_URL = '//s3.amazonaws.com/%s/' % AWS_STORAGE_BUCKET_NAME
+ADMIN_MEDIA_PREFIX = STATIC_URL + 'admin/'
 
 try:
     from settings_local import *
