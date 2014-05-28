@@ -33,6 +33,27 @@
 		background-color: #363535;
 	}
 
+	.glyph-wrapper {
+		display: inline-block;
+		float: right;
+		margin: 3px;
+		position : absolute;
+		right : 0px;
+		bottom : 3px;
+		background-color: inherit;
+	}
+
+	.glyph-button {
+		height : 18px;
+		width : 18px;
+		padding : 2px;
+		text-align : center;
+	}
+
+	.glyph-button:hover {
+		color: #999999;
+	}
+
 	.width-fill { 
 		width : 100% ;
 		}
@@ -115,6 +136,7 @@
 		text-align: center;
 		color : #FFFFFF ;
 		font-size :  60px;
+		margin-bottom: 0px;
 	}
 
 	.logo {
@@ -194,18 +216,25 @@
 	}
 
 	.item {
+		position : relative;
 		margin : 0px;
 		margin-bottom: 3px;
 		padding : 0px;
 		border : 1px solid #CCCCCC;
+		white-space: nowrap;
+		text-overflow : ellipsis;
 	}
 
 	.item:hover {
-		background-color : #EEEEEE ;
+		border-color : #666666 ;
 	}
 
 	.trip-item {
 		padding-bottom: 5px ;
+	}
+
+	.trip-active {
+		background-color: #E9EFF2;
 	}
 
 	.item-main {
@@ -214,15 +243,16 @@
 		font-size: 13pt ;
 		margin-left: 10px ;
 		margin-top: 3px;
+		display : inline-block;
 	}
 
 	.pin-main {
-		display : inline-block;
+		position : absolute;
 		margin-bottom: 3px;
+		max-width: 70%;
 	}
 
 	.pin-item-img {
-		height : 35px;
 		width : 35px;
 		margin: 0;
 		padding: 0;
@@ -257,8 +287,8 @@
 	}
 
 	.front-pin {
-		max-height : 100px ;
-		margin : 10px;
+		max-height : 150px ;
+		margin : 0px;
 	}
 
 	.header-right {

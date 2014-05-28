@@ -18,7 +18,9 @@ def index_view(request):
 
 def trip_view(request,trip_id):
     trip = get_object_or_404(Trip, pk=trip_id)
-    content = { 'trip' : trip }
+    content = { 
+                'trip' : trip,
+                'edit' : trip.user.username == request.user.username }
     if request.GET.has_key('post'):
         if request.GET['post'] == 'last':
             content['post'] = trip.pin_set.count() - 1
@@ -82,10 +84,9 @@ def new_trip_view(request):
 def new_post_view(request,trip_id):
     trip = get_object_or_404(Trip, pk=trip_id)
     if request.user != trip.user:
-        return redirect("/")
+        return redirect(request.META.get("HTTP_REFERRER","/"))
     if request.method == "POST":
         form = forms.NewPostForm(request.POST)
-        print request.POST
         if form.is_valid():
             lat = form.cleaned_data['lat']
             lon = form.cleaned_data['lon']
@@ -112,6 +113,54 @@ def new_post_view(request,trip_id):
         'form': form
         })
 
+@login_required
+def finish_view(request,trip_id):
+    trip = get_object_or_404(Trip, pk=trip_id)
+    if request.user != trip.user:
+        response = {'success':False}
+    else:
+        trip.active = False
+        trip.save()
+        response = {'success':True}
+    response = simplejson.dumps(response)
+    return HttpResponse(response, mimetype='application/json')
+
+@login_required
+def reactivate_view(request,trip_id):
+    trip = get_object_or_404(Trip, pk=trip_id)
+    if request.user != trip.user:
+        response = {'success':False}
+    else:
+        trip.active = True
+        trip.save()
+        response = {'success':True}
+    response = simplejson.dumps(response)
+    return HttpResponse(response, mimetype='application/json')
+
+@login_required
+def delete_trip_view(request,trip_id):
+    trip = get_object_or_404(Trip, pk=trip_id)
+    if request.user != trip.user:
+        response = {'success':False}
+    else:
+        trip.delete()
+        response = {'success':True}
+    response = simplejson.dumps(response)
+    return HttpResponse(response, mimetype='application/json')
+
+@login_required
+def delete_pin_view(request,pin_id):
+    pin = get_object_or_404(Pin, pk=pin_id)
+    if request.user != pin.trip.user:
+        response = {'success':False}
+    else:
+        pin.delete()
+        response = {'success':True}
+    response = simplejson.dumps(response)
+    return HttpResponse(response, mimetype='application/json')
+
+
+@login_required
 def file_upload_view(request):
     if request.method == "POST":
         files = request.FILES[u'files[]']

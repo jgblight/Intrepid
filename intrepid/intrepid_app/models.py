@@ -39,6 +39,9 @@ class Profile(models.Model):
         else:
             return self.user.username
 
+    def get_active_trips(self):
+        return self.user.trip_set.filter(active=True)
+
 def create_profile(sender, **kwargs):
     user = kwargs["instance"]
     if kwargs["created"]:
@@ -84,18 +87,29 @@ class Trip(models.Model):
     def pins_reverse(self):
         return self.pin_set.order_by("-pin_date")
 
-    def get_center(self):
+    def get_map_params(self):
         pins = self.pins()
         center_lat = 0.0;
         center_lon = 0.0;
+        lat = []
+        lon = []
         if len(pins):
             for p in pins:
-                center_lat += p.location.lat
-                center_lon += p.location.lon
-            center_lat /= len(pins)
-            center_lon /= len(pins)
+                lat.append(p.location.lat)
+                lon.append(p.location.lon)
+            map_params = {
+                'sw' : (min(lat),min(lon)),
+                'ne' : (max(lat),max(lon)),
+                'center' : (sum(lat)/float(len(pins)),sum(lat)/float(len(pins)))
+            }
+        else:
+            map_params = {
+                'sw' : (-50,-50),
+                'ne' : (50,50),
+                'center' : (0,0)
+            }
 
-        return (center_lat,center_lon)
+        return map_params
 
 class Pin(models.Model):
     trip = models.ForeignKey(Trip)

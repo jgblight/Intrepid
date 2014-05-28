@@ -35,7 +35,7 @@
       {% block initialize_map %}
   		var mapOptions = {
   		      center: new google.maps.LatLng(0,0),
-            zoom: 3,
+            zoom: 2,
             mapTypeId: google.maps.MapTypeId.TERRAIN,
             mapTypeControl: false,
             panControl: true,
@@ -75,7 +75,7 @@
       <span class="btn btn-primary dropdown-toggle" id="dLabel" data-toggle="dropdown" > 
        <span class="glyphicon glyphicon-pencil"></span> New Pin</span>
     <ul class="dropdown-menu right-menu" role="menu" aria-labelledby="dLabel">
-      {% for trip in user.trip_set.all %}
+      {% for trip in user.profile.get_active_trips %}
       <li class="drop-link"> <a href="/trip/{{trip.id}}/post"> {{trip.name}} </a> </li>
       {% endfor %}
       <li class="drop-link"> <a href="/trip/new"> New Trip </a> </li>
