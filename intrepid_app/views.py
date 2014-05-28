@@ -143,6 +143,9 @@ def delete_trip_view(request,trip_id):
     if request.user != trip.user:
         response = {'success':False}
     else:
+        pins = trip.pin_set.all()
+        for p in pins:
+            p.delete()
         trip.delete()
         response = {'success':True}
     response = simplejson.dumps(response)
