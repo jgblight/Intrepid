@@ -1,0 +1,214 @@
+{% extends "map_base.html" %}
+
+{% block dependencies %}
+<link href='/static/css/popup.css' rel='stylesheet' type='text/css'>
+<script src="/static/js/jquery.slides.js"></script>
+<script src="/static/js/popup.js"></script>
+{% endblock %}
+
+{% block script_functions %}
+	var pins = [
+	{% for p in trip.pins %}
+		{ 
+		name : "{{ p.name }}",
+		blurb : "{{ p.text|linebreaksbr }}",
+		location : "{{ p.location.name }}",
+		date : "{{ p.pin_date.date }}",
+		lat : {{p.location.lat}},
+		lon : {{p.location.lon}},
+		media : [
+		{% for m in p.media_set.all %}
+			{ previewUrl : "{{ m.image.pin_display.url }}",
+			  url : "{{ m.image.media.url }}" },
+		{% endfor %}
+		]
+		},
+	{% endfor %}
+	];
+
+	function showPin() {
+		$("#trip-pane").removeClass("show-trip-pane").addClass("show-pin-pane");
+		$("#trip-image-div").removeClass("show-trip-image").addClass("show-pin-image");
+		$("#trip-info").hide();
+		$("#pin-info").show();
+	};
+
+	function showTrip() {
+		$("#trip-pane").removeClass("show-pin-pane").addClass("show-trip-pane");
+		$("#trip-image-div").removeClass("show-pin-image").addClass("show-trip-image");
+		$("#pin-info").hide();
+		$("#trip-info").show();
+		{% with mp=trip.get_map_params %}
+		map.fitBounds(new google.maps.LatLngBounds(
+			new google.maps.LatLng({{mp.sw.0}},{{mp.sw.1}}),
+			new google.maps.LatLng({{mp.ne.0}},{{mp.ne.1}})
+			));
+		{% endwith %}
+	}
+
+	function pinInfo(index) {
+		var info = pins[index];
+		var pin_div = $("#pin-info");
+		pin_div.find("#pin-title").html(info.name);
+		pin_div.find("#pin-location").html(info.location);
+		pin_div.find("#pin-date").html(info.date);
+		pin_div.find("#pin-blurb").html(info.blurb);
+		if ( info.media.length > 0 ) {
+			var items = [];
+			$(".slidesjs-control").empty();
+			for (var i = 0; i < info.media.length; i++) {
+				$("<img />").attr("src",info.media[i].previewUrl).attr("href",info.media[i].url).addClass('insert-image').appendTo(".slidesjs-control");
+			}
+			$("#slides").show();
+			if (info.media.length > 1) {
+
+				$("#slides").slidesjs('refresh');
+				$(".slidesjs-navigation").show();
+				$('.slidesjs-control').magnificPopup({
+				    delegate: 'img',
+				    gallery: {
+				      enabled: true
+				    },
+			    type: 'image' // this is default type
+			});
+			}
+			else {
+				$(".slidesjs-navigation").hide();
+				$(".insert-image").magnificPopup();
+			}
+
+		}
+		else {
+			pin_div.find("#slides").hide();
+		}
+		map.setCenter(new google.maps.LatLng(info.lat, info.lon));
+		showPin();
+	};
+
+	function deletePin(pin_id) {
+	    var url = "/pin/" + pin_id + "/delete";
+	    $.post(url,{csrfmiddlewaretoken:'{{csrf_token}}' },function(data){
+	      if (data.success) {
+	        $("#pin_" + pin_id).hide();
+	      } else {
+	        alert("Failed to delete pin");
+	      }
+	    }).fail(function() {
+	      alert("Failed to delete pin");
+	    });
+	  };
+{% endblock %}
+
+{% block initialize_script %}
+
+        var loc,marker;
+        var pathArr = [];
+        {% for p in trip.pins %}
+        	loc = new google.maps.LatLng({{p.location.lat}},{{p.location.lon}})
+			marker = new google.maps.Marker({	
+				position: loc,
+				icon : { url : '/static/images/pin_2.svg',
+						scaledSize : new google.maps.Size(40,40,'px','px'),
+						size : new google.maps.Size(40,40,'px','px'),
+            			anchor : new google.maps.Point(19,33) }
+			});
+			marker.setMap(map);
+			{% if p.tracks %}
+				pathArr.push(loc);
+			{% endif %}
+
+			google.maps.event.addListener(marker, 'click', function() {
+				pinInfo({{ forloop.counter0 }});
+			});
+			$("#pin_{{p.id}}").click(function(e){
+			    if (!$(e.target).parent().hasClass("drop-link")){
+       				pinInfo({{ forloop.counter0 }});
+      			}
+			});
+
+			$("#delete_{{p.id}}").click(function(){deletePin({{p.id}})});
+        {% endfor %}
+		
+		poly = new google.maps.Polyline({
+			path: pathArr,
+			strokeColor: "#363535",
+			strokeOpacity: 1.0,
+			strokeWeight: 2
+		});
+		poly.setMap(map);
+
+		$("#slides").slidesjs({
+    		width: 200,
+    		height: 200,
+    		navigation: {active:false, effect:"fade"},
+    		pagination: {active:false},
+    	});
+
+		$("#trip-name").click(showTrip);
+		$("#trip-image-div").click(showTrip);
+
+		{% if post %}
+			pinInfo({{post}});
+		{% else %}
+			showTrip();
+		{% endif %}
+
+{% endblock %}
+
+{% block content %}
+  	<div id="trip-image-div" class="hover"> 
+  		<img id="trip-image" src="{{trip.get_image_url}}" />
+  	</div>
+
+  	<div id="trip-pane">
+	  	<div id="trip-info">
+	  		<div class="header-div">
+		  	<p class="minor-text link hover link-item" href="/profile/{{trip.user.username}}">{{trip.user.profile.get_name}}</p>
+	  		<h2 class="title-text">{{trip.name}}</h2>
+	  		<p class="minor-text"> {{trip.start}} - {{trip.end}}</p>
+	  		</div>
+	  		<div class="blurb">{{trip.text}}</div>
+	  		<div class="item-list">
+	  		<h3 class="subtitle">Pins</h3>
+	  		{% for p in trip.pins %}
+		  		<div class="item pin-item hover" id="pin_{{p.id}}">
+		  			<img class="pin-item-img" src="{{p.thumbnail_url}}">
+	        		<p class="item-main pin-main">{{p.name}} <span class="tiny-text">{{p.pin_date.date|date:"d/m/y" }}</span></p>
+					{% if edit %}
+	        		<div class="dropdown glyph-wrapper">
+			          <span class="link glyphicon glyphicon-pencil glyph-button dropdown-toggle" id="dLabel_{{p.id}}" data-toggle="dropdown"></span>
+			          <ul class="dropdown-menu right-menu" role="menu" aria-labelledby="dLabel_{{p.id}}">
+						<li class="drop-link"> <a href="#" id="delete_{{p.id}}"> Delete Pin </a> </li>
+			          </ul>
+	        		</div>
+	        		{% endif %}
+		        </div>
+		    {% empty %}
+		    <p class="blurb">No pins yet..</p>
+	  		{% endfor %}
+
+	  		{% if trip.active and edit %}
+    		<a class="btn btn-primary" href="/trip/{{trip.id}}/post">New Pin</a>
+    		{% endif %}
+	  		</div>
+	  	</div>
+	  	<div id="pin-info">
+	  		<div class="header-div">
+	  		<p class="subtitle link hover" id="trip-name"> {{trip.name}} </p>
+	  		<h2 class="title-text" id="pin-title"></h2>
+	  		<p class="minor-text" id="pin-location"> </p>
+	  		<p class="minor-text" id="pin-date"> </p>
+	  		</div>
+
+	  		<div id="slides" class="insert-holder slides">
+	  			<img src="#">
+	  			<a href="#" class="slidesjs-previous slidesjs-navigation navigation"><span class="glyphicon glyphicon-chevron-left"></span></a>
+
+	  			<a href="#" class="slidesjs-next slidesjs-navigation navigation"><span class="glyphicon glyphicon-chevron-right"></span></a>
+  			</div>
+
+  			<div class="blurb" id="pin-blurb"> </div>
+	  	</div>
+  	</div>
+
+{% endblock %}

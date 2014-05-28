@@ -1,0 +1,159 @@
+{% extends "map_base.html" %}
+
+{% block script_functions %}
+
+  function finishTrip(trip_id) {
+    var url = "/trip/" + trip_id + "/finish";
+    $.post(url,{csrfmiddlewaretoken:'{{csrf_token}}' },function(data){
+      if (data.success) {
+        $("#trip_" + trip_id).removeClass("trip-active");
+
+      } else {
+        alert("Failed to update trip");
+      }
+    }).fail(function() {
+      alert("Failed to update trip");
+    });
+  };
+
+  function reactivateTrip(trip_id) {
+    var url = "/trip/" + trip_id + "/reactivate";
+    $.post(url,{csrfmiddlewaretoken:'{{csrf_token}}' },function(data){
+      if (data.success) {
+        $("#trip_" + trip_id).addClass("trip-active");
+      } else {
+        alert("Failed to update trip");
+      }
+    }).fail(function() {
+      alert("Failed to update trip");
+    });
+  };
+
+  function deleteTrip(trip_id) {
+    var url = "/trip/" + trip_id + "/delete";
+    $.post(url,{csrfmiddlewaretoken:'{{csrf_token}}' },function(data){
+      if (data.success) {
+        $("#trip_" + trip_id).hide();
+      } else {
+        alert("Failed to delete trip");
+      }
+    }).fail(function() {
+      alert("Failed to delete trip");
+    });
+  };
+
+{% endblock %}
+
+{% block initialize_map %}
+    {% if profile_user.profile.hometown.name %}
+      var loc = new google.maps.LatLng({{profile_user.profile.hometown.lat}},{{profile_user.profile.hometown.lon}});
+      var zoom = 3;
+    {% else %}
+      var loc = new google.maps.LatLng(0,0);
+      var zoom = 2;
+    {% endif %}
+
+		var mapOptions = {
+		      center: loc,
+          zoom: zoom,
+          mapTypeId: google.maps.MapTypeId.TERRAIN,
+          mapTypeControl: false,
+          panControl: true,
+          zoomControl: true,
+          streetViewControl: false
+        };
+        map = new google.maps.Map($("#map-canvas")[0], mapOptions);
+    {% if profile_user.profile.hometown.name %}
+		var marker = new google.maps.Marker({	
+				position: loc,
+        icon : { url : '/static/images/home.svg',
+            scaledSize : new google.maps.Size(26,26,'px','px'),
+            size : new google.maps.Size(26,26,'px','px') }
+			});
+		marker.setMap(map);
+    {% endif %}
+    {% for trip in profile_user.trip_set.all %}
+    var pathArr = [];
+    {% for pin in trip.pins %}
+      loc = new google.maps.LatLng({{pin.location.lat}},{{pin.location.lon}})
+      marker = new google.maps.Marker({ 
+        position: loc,
+        icon : { url : '/static/images/pin_2.svg',
+            scaledSize : new google.maps.Size(40,40,'px','px'),
+            size : new google.maps.Size(40,40,'px','px'),
+            anchor : new google.maps.Point(19,33) }
+      });
+      marker.setMap(map);
+
+      {% if pin.tracks %}
+        pathArr.push(loc);
+      {% endif %}
+    {% endfor %}
+
+    var poly = new google.maps.Polyline({
+      path: pathArr,
+      strokeColor: "#363535",
+      strokeOpacity: 1.0,
+      strokeWeight: 2
+    });
+    poly.setMap(map);
+
+    {% if trip.active %}
+    $("#finish_{{trip.id}}").click(function(){finishTrip({{trip.id}})});
+    {% else %}
+    $("#reactivate_{{trip.id}}").click(function(){reactivateTrip({{trip.id}})});
+    {% endif %}
+    $("#delete_{{trip.id}}").click(function(){deleteTrip({{trip.id}})});
+
+    {% endfor %}
+
+    $(".trip-item").click(function(e){
+      if (!$(e.target).parent().hasClass("drop-link")){
+       window.location=$(this).attr("href"); 
+      }
+    });
+
+{% endblock %}
+
+{% block content %}
+  	<div class="insert-holder">
+      <img class="insert-image" src="{{profile_user.profile.get_image_url}}" />
+  	</div>
+    <div class="header-div">
+  	<h2 class="title-text">{{profile_user.profile.get_name}}</h2>
+  	<p class="minor-text">{{profile_user.profile.get_hometown}}</p>
+    </div>
+  	<div class="blurb"> {{profile_user.profile.text}} </div>
+
+  	<div class="item-list">
+    <h3 class="subtitle">Adventures</h3>
+  	{% for trip in profile_user.trip_set.all %}
+  		<div class="item trip-item {% if trip.active %} trip-active {% endif%}" id="trip_{{trip.id}}" href="/trip/{{trip.id}}">
+        <div class="link-image-div"> <img class="link-image" src="{{trip.get_image_url}}"></div>
+        <p class="item-main">{{trip.name}} </p>
+        {% if edit %}
+        <div class="dropdown glyph-wrapper">
+          <span class="link glyphicon glyphicon-pencil glyph-button dropdown-toggle" id="dLabel_{{trip.id}}" data-toggle="dropdown"></span>
+          <ul class="dropdown-menu right-menu" role="menu" aria-labelledby="dLabel_{{trip.id}}">
+            {% if trip.active %}
+            <li class="drop-link"> <a href="#" id="finish_{{trip.id}}"> Finish Trip </a> </li>
+            {% else %}
+            <li class="drop-link"> <a href="#" id="reactivate_{{trip.id}}"> Reactivate Trip </a> </li>
+            {% endif %}
+            <li class="drop-link"> <a href="#" id="delete_{{trip.id}}"> Delete Trip </a> </li>
+          </ul>
+        </div>
+        {% endif %}
+      </div>
+    {% empty %}
+
+    <p class="blurb">No adventures yet..</p>
+  	{% endfor %}
+    {% if edit %}<a class="btn btn-primary" href="/trip/new">New Trip</a>{% endif %}
+  	</div>
+
+    {% if edit %}
+    <div class="edit-button link-item" href="/profile/{{profile_user.username}}/edit"> Edit </div>
+    {% endif %}
+
+{% endblock %}

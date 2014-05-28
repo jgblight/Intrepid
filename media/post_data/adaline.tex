@@ -1,0 +1,51 @@
+\documentclass[a4paper,12pt]{article}
+\begin{document}
+
+b) Since the Adaline neuron can only be trained on linearly separable data, we can show that theses classes are linearly separable by successfully training an Adaline neuron. The following program detemines the optimal weights for a single neuron using the LMS update rule. Based on the data provided, the system converges within a specified threshold after 39 epochs. Since the system converges, the data must be linearly separable.
+
+\subsection*{Code}
+\begin{verbatim}
+import numpy as np
+
+def main():
+    w = np.array([1,-1,0,0.5])
+    n = 0.1
+    x_list = [np.array([1,-2,0,-1]),
+            np.array([0,1.5,-0.5,-1]),
+            np.array([-1,1,0.5,-1])]
+    t_list = [-1,-1,1]
+
+    converged = False
+    threshold = 0.001
+    epochs = 0
+
+    while not converged and epochs < 100:
+        converged = True
+        epochs += 1
+        for x,t in zip(x_list,t_list):
+            delta_w = 0.1*(t-np.sum(w*x))*x
+            w += delta_w
+            if not np.all(delta_w < threshold):
+                converged = False
+
+    print "Final Weights: " + str(w)
+    print "Epochs: " + str(epochs)
+    print "Predicted Values: "
+    for x in x_list:
+        print np.sum(w*x)
+
+if __name__ == '__main__':
+    main()
+\end{verbatim}
+
+\subsection*{Output}
+\begin{verbatim}
+Final Weights: [-0.81536632 -0.06836239  1.13678877  0.32131618]
+Epochs: 39
+Predicted Values: 
+-0.999957713201
+-0.992254159293
+0.994082134563
+\end{verbatim}
+
+\end{document}

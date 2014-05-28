@@ -1,0 +1,120 @@
+{% extends "map_base.html" %}
+
+{% block dependencies %}
+  <script src='/static/js/filestyle.js'></script> 
+{% endblock %}
+
+  {% block script_functions %}
+    function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                
+                reader.onload = function (e) {
+                    var photo = $('#photo'); 
+                    photo.attr('src', e.target.result);
+                    photo.removeClass('insert-image');
+                    photo.dragncrop('destroy');
+                    photo.dragncrop({ 
+                        centered : true ,
+                        instruction : true ,
+                        stop: function(e,pos) {
+                          $("#id_image_x").val(pos.dimension[0]);
+                          $("#id_image_y").val(pos.dimension[1]);
+                        }                       
+                     });
+                    photo.imagesLoaded().done(function(){
+                      var pos = photo.dragncrop("getPosition");
+                      $("#id_image_x").val(pos.dimension[0]);
+                      $("#id_image_y").val(pos.dimension[1]);
+                      
+                    }); 
+                }
+                
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+  {% endblock %}
+
+  {% block initialize_script %}
+      $("input").addClass("form-control")
+      $("textarea").addClass("form-control")
+      $(".btn").removeClass("form-control")
+    
+      $("#id_image").change(function(){
+          readURL(this);
+      });
+      $("#id_image").filestyle({
+      input: false,
+      buttonText: "Choose profile image",
+      buttonName: "btn-default btn-file",
+      iconName: "glyphicon-camera"
+      });
+
+      {% if user.first_name %}
+      $("#id_first_name").val("{{user.first_name}}")
+      $("#id_last_name").val("{{user.last_name}}")
+      {% else %}
+      $("#id_first_name").attr("placeholder","First Name")
+      $("#id_last_name").attr("placeholder","Last Name")
+      {% endif %}
+
+      var searchbox = new google.maps.places.Autocomplete(document.getElementById("id_hometown_name"));
+      searchbox.setTypes(['geocode']);
+
+      {% if user.profile.hometown %}
+        $("#id_hometown_name").val("{{user.profile.hometown.name}}")
+        var loc = new google.maps.LatLng({{user.profile.hometown.lat}},{{user.profile.hometown.lon}});
+        var marker = new google.maps.Marker({ 
+          position: loc,
+          icon : { url : '/static/pin_2.svg',
+            scaledSize : new google.maps.Size(26,39,'px','px'),
+            size : new google.maps.Size(26,39,'px','px') }
+        });
+        marker.setMap(map);
+        map.setCenter(loc);
+      {% else %}
+      $("#id_hometown_name").attr("placeholder","Enter your hometown..")
+      {% endif %}
+
+      {% if user.profile.text %}
+      $("#id_text").val("{{user.profile.text}}")
+      {% else %}
+      $("#id_text").attr("placeholder","Tell us about yourself..")
+      {% endif %}
+
+      google.maps.event.addListener(searchbox, 'place_changed', function() {
+        var place = searchbox.getPlace();
+        $("#id_lat").val(place.geometry.location.lat());
+        $("#id_lon").val(place.geometry.location.lng());
+        var marker = new google.maps.Marker({
+          position: place.geometry.location,
+          title: place.name,
+          map: map
+        });
+        map.setCenter(marker.getPosition());
+
+      }); 
+
+      $('#photo').dragncrop();
+
+  {% endblock %}
+
+  {% block content %}
+  {% load tags %}
+  	<div class="insert-holder">
+      <img class="insert-image" src="{{user.profile.get_image_url}}" id="photo"/>
+    </div>
+  	<form action="/profile/{{user.username}}/edit" enctype="multipart/form-data" method="post">{% csrf_token %}
+      {{ form.non_field_errors }}
+      {{ form.image_x }}
+      {{ form.image_y }}
+      {{ form.lat }}
+      {{ form.lon }}
+      {% field form.image %}
+      <div class="form-inline"> {% field_inline form.first_name %} {% field_inline form.last_name %} </div>
+      {% field form.hometown_name %}
+      {% field form.text %}
+
+    <input type="submit" class="btn btn-info" value="Save" />
+
+  {% endblock %}
