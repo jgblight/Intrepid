@@ -109,6 +109,9 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_ROOT = 'staticfiles'
 STATIC_URL = '/static/'
 
+MEDIA_ROOT = 'media'
+MEDIA_URL = '/media/'
+
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 )
