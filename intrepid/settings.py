@@ -111,6 +111,7 @@ STATICFILES_DIRS = (
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 AWS_STORAGE_BUCKET_NAME = 'intrepid-jgblight'
 MEDIA_URL = '//s3.amazonaws.com/%s/' % AWS_STORAGE_BUCKET_NAME
+AWS_QUERYSTRING_AUTH = False
 
 try:
     from settings_local import *
