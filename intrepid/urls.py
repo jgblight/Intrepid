@@ -4,6 +4,11 @@ admin.autodiscover()
 import django.contrib.auth
 from django.conf import settings
 from django.conf.urls.static import static
+from piston.resource import Resource
+
+from intrepid_app.api import ActiveTripHandler
+
+active_trip_resource = Resource(handler=ActiveTripHandler)
 
 urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
@@ -25,6 +30,9 @@ urlpatterns += patterns('intrepid_app.views',
 	url(r'^trip/(?P<trip_id>[0-9]+)/delete$','delete_trip_view'),
 	url(r'^file_upload$','file_upload_view'),
 	url(r'^pin/(?P<pin_id>[0-9]+)/delete$','delete_pin_view'))
+
+urlpatterns += patterns('',
+	url(r'^api/(?P<username>[0-9A-Za-z_@\+\-\.]+)/trips/active',active_trip_resource))
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
