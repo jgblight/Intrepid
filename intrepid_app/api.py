@@ -1,6 +1,5 @@
 from piston.handler import BaseHandler
 from piston.utils import rc, throttle
-
 from intrepid_app.models import Trip,User
 
 class ActiveTripHandler(BaseHandler):

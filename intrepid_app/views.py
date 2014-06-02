@@ -1,5 +1,4 @@
 import datetime
-import simplejson
 from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
@@ -8,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from intrepid_app.models import Profile,Trip, Pin,Location,Media,Image
 from django.http import HttpResponse
 import forms
+import json
 
 @login_required
 def index_view(request):
@@ -122,7 +122,7 @@ def finish_view(request,trip_id):
         trip.active = False
         trip.save()
         response = {'success':True}
-    response = simplejson.dumps(response)
+    response = json.dumps(response)
     return HttpResponse(response, mimetype='application/json')
 
 @login_required
@@ -134,7 +134,7 @@ def reactivate_view(request,trip_id):
         trip.active = True
         trip.save()
         response = {'success':True}
-    response = simplejson.dumps(response)
+    response = json.dumps(response)
     return HttpResponse(response, mimetype='application/json')
 
 @login_required
@@ -148,7 +148,7 @@ def delete_trip_view(request,trip_id):
             p.delete()
         trip.delete()
         response = {'success':True}
-    response = simplejson.dumps(response)
+    response = json.dumps(response)
     return HttpResponse(response, mimetype='application/json')
 
 @login_required
@@ -159,7 +159,7 @@ def delete_pin_view(request,pin_id):
     else:
         pin.delete()
         response = {'success':True}
-    response = simplejson.dumps(response)
+    response = json.dumps(response)
     return HttpResponse(response, mimetype='application/json')
 
 
@@ -182,7 +182,7 @@ def file_upload_view(request):
             else:
                 result.append({"error" : new_file.name + " is not a valid image"})
 
-        response_data = simplejson.dumps(result)
+        response_data = json.dumps(result)
         return HttpResponse(response_data, mimetype='application/json')
     else:
         pass #return 404
