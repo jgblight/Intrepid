@@ -5,6 +5,7 @@ import django.contrib.auth
 from django.conf import settings
 from django.conf.urls.static import static
 from piston.resource import Resource
+from piston.authentication import HttpBasicAuthentication
 
 from intrepid_app.api import ActiveTripHandler
 
@@ -22,7 +23,10 @@ def secure_required(view_func):
         return view_func(request, *args, **kwargs)
     return _wrapped_view_func
 
-active_trip_resource = secure_required(Resource(handler=ActiveTripHandler))
+auth = HttpBasicAuthentication(realm="Intrepid")
+ad = { 'authentication': auth }
+
+active_trip_resource = secure_required(Resource(handler=ActiveTripHandler,**ad))
 
 urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
