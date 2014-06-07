@@ -7,20 +7,7 @@ import datetime
 
 import sys
 
-class CsrfExemptBaseHandler(BaseHandler):
-            """
-            handles request that have had csrfmiddlewaretoken inserted 
-            automatically by django's CsrfViewMiddleware
- 
-            """
-            def flatten_dict(self, dct):
-                if 'csrfmiddlewaretoken' in dct:
-                    # dct is a QueryDict and immutable
-                    dct = dct.copy()  
-                    del dct['csrfmiddlewaretoken']
-                return super(CsrfExemptBaseHandler, self).flatten_dict(dct)
-
-class ActiveTripHandler(CsrfExemptBaseHandler):
+class ActiveTripHandler(BaseHandler):
     allowed_methods = ('GET',)
     fields = ('id','name')
     model = Trip
@@ -29,7 +16,7 @@ class ActiveTripHandler(CsrfExemptBaseHandler):
         active_trips = Trip.objects.filter(user__username=username).filter(active=True)
         return active_trips
 
-class PinHandler(CsrfExemptBaseHandler):
+class PinHandler(BaseHandler):
     allowed_methods = ('GET',)
     model = Pin
 
