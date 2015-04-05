@@ -58,3 +58,8 @@ docs/_build/
 
 intrepid/settings_local.py
 .elasticbeanstalk/
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
