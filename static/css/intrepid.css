@@ -1,0 +1,406 @@
+	html { 
+		height: 100% ;
+		}
+
+	body { 
+		height: 100%; 
+		margin: 0 ; 
+		padding: 0 ;
+		}
+
+	form {
+		margin : 5px ;
+	}
+
+	.ui-datepicker {
+		font-size : 0.7em;
+	}
+
+	.bootstrap-filestyle {
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+	.inline-group {
+		display: inline-block;
+	}
+
+	.btn-file {
+		background-color: #F1F7F8;
+	}
+
+	.splash-page {
+		background-color: #363535;
+	}
+
+	.glyph-wrapper {
+		display: inline-block;
+		float: right;
+		margin: 3px;
+		position : absolute;
+		right : 0px;
+		bottom : 3px;
+		background-color: inherit;
+	}
+
+	.glyph-button {
+		height : 18px;
+		width : 18px;
+		padding : 2px;
+		text-align : center;
+	}
+
+	.glyph-button:hover {
+		color: #999999;
+	}
+
+	.width-fill { 
+		width : 100% ;
+		}
+
+	.fill {	
+		height : 100% ;
+		margin : 0 ;
+		padding : 0 ;
+		}
+
+	.main {
+		position: absolute;
+    	top : 44px ;
+    	bottom : 0px ;
+		margin : 0 ;
+		padding : 0 ;
+	}
+
+	.header {
+		background-color: #363535 ;
+		height : 44px ; 
+	}
+
+	.info-div { 	
+		text-align: center ;
+		background-color: #FFFFFF;
+		border-left : 1px solid #CCCCCC;
+		overflow-y: auto;
+		overflow-x: hidden;
+		}
+
+	.header-div {
+		margin : 15px;
+		}
+
+	.insert-holder {
+	 	width : 200px ;
+		height : 200px ;
+		margin-top : 10px ;
+		margin-left : auto ;
+		margin-right : auto ;
+		padding : 0px ;
+		border-radius : 10px ;
+		}
+
+	.insert-image { 	
+		max-width : 100%;
+		border-radius : 10px ;
+		}
+
+	.slides {
+		height : auto;
+	}
+
+	.slides:hover {
+		cursor : pointer;
+	}
+
+	.hover:hover {
+		cursor: pointer;
+	}
+
+	.form-group {
+		font-family : 'Raleway', sans-serif ;
+		width : 80% ;
+		margin-left: auto ;
+		margin-right: auto ;
+		margin-top: 15px ;
+		margin-bottom: 15px ;
+	}
+	.title-text {
+		font-family : 'Josefin Slab', serif ;
+		color : #2A2C31 ;
+		font-size :  30px;
+		margin: 2px ;
+	}
+
+	.big-logo {		
+		font-family : 'Josefin Slab', serif ;
+		text-align: center;
+		color : #FFFFFF ;
+		font-size :  60px;
+		margin-bottom: 0px;
+	}
+
+	.logo {
+		font-family : 'Josefin Slab', serif ;
+		text-align: left;
+		color : #FFFFFF ;
+		font-size :  30px;
+		margin: 5px ;
+		margin-left: 15px;
+
+	}
+
+	.subtitle {
+		font-family : 'Josefin Slab', serif ;
+		color : #2A2C31 ;
+		font-size :  20px;
+		margin-bottom : 2px ;
+	}
+
+	.minor-text {
+		font-family : 'Raleway', sans-serif ;
+		color : #2A2C31 ;
+		font-size: 9pt ;
+		margin : 4px;
+	}
+
+	.blurb {
+		font-family : 'Raleway', sans-serif ;
+		color : #666666 ;
+		font-size: 11pt ;
+		text-align : center ;  
+		margin-left : 12% ; 
+		margin-right : 12% ;
+		margin-bottom : 5px ; 
+		padding : 5px ;
+	}
+
+	.tiny-text {
+		font-family : 'Raleway', sans-serif ;
+		color : #666666 ;
+		font-size: 9pt ;
+		margin : 4px;
+	}
+
+	.link {
+		color : #428bca;
+	}
+
+	.control-label {
+		font-family : 'Raleway', sans-serif ;
+		color : #2A2C31 ;
+		font-size: 11pt ;
+		margin-top: 5px ;
+		margin-bottom: 5px ;
+	}
+
+	.control-label-alt {
+		color : #FFFFFF ;
+		font-size: 9pt ;
+	}
+
+	.btn {
+		margin-top: 5px ;
+		margin-bottom: 5px ;
+	}
+
+	.form-control {
+		margin-top: 5px ;
+		margin-bottom: 5px ;
+	}
+
+	.item-list {
+		text-align : left ;  
+		margin-left : 10% ; 
+		margin-right : 10% ;
+		padding : 0px ;
+	}
+
+	.item {
+		position : relative;
+		margin : 0px;
+		margin-bottom: 3px;
+		padding : 0px;
+		border : 1px solid #CCCCCC;
+		white-space: nowrap;
+		text-overflow : ellipsis;
+	}
+
+	.item:hover {
+		border-color : #666666 ;
+	}
+
+	.trip-item {
+		padding-bottom: 5px ;
+	}
+
+	.trip-active {
+		background-color: #E9EFF2;
+	}
+
+	.item-main {
+		font-family : 'Raleway', sans-serif ;
+		color : #2A2C31 ;
+		font-size: 13pt ;
+		margin-left: 10px ;
+		margin-top: 3px;
+		display : inline-block;
+	}
+
+	.pin-main {
+		position : absolute;
+		margin-bottom: 3px;
+		max-width: 70%;
+	}
+
+	.pin-item-img {
+		width : 35px;
+		height: auto;
+		margin: 0;
+		padding: 0;
+		display: inline-block;
+	}
+
+	.edit-button {
+		position: fixed ;
+		bottom : 0px ;
+		min-width : 50px ;
+		right : 50px ;
+		background-color: #CF4647;
+		border-top-left-radius: 5px;
+		border-top-right-radius: 5px;
+		padding : 4px;
+		color : #FFFFFF;
+		font-family : 'Raleway', sans-serif ;
+		font-size : 11pt;
+	}
+
+	.edit-button:hover {
+		padding-bottom: 8px;
+	}
+
+	.link-image {
+		width : 100%;
+	}
+
+	.link-image-div {
+		height : 30px ;
+		overflow : hidden ;
+	}
+
+	.front-pin {
+		max-height : 150px ;
+		margin : 0px;
+	}
+
+	.header-right {
+		text-align: right ;	}
+
+	.header-button-wrapper {
+		margin-left: 5px ;
+		margin-right: 5px ;
+		display: inline-block;
+	}
+
+	.header-icon {
+		display: inline-block;
+		width: 36px ;
+		height: 36px ;
+		margin-left: 5px ;
+		margin-right: 5px ;
+	}
+
+	.drop-link {
+		margin-right: 5px ;
+		color : #000000 ;
+
+	}
+
+	.drop-link-bold {
+		padding-left : 20px ;
+		padding-right : 20px ;
+		font-weight: bold;
+	}
+
+	.right-menu {
+		min-width : 100px;
+		right : 5px ;
+		left : auto;
+	}
+
+	.link-item:hover {
+		cursor : pointer;
+	}
+
+	.center-block-logo {
+		height : 300px;
+		position : relative;
+		top : 50%;
+		margin-top: -150px;
+		text-align : center;
+	}
+
+	.center-block-form {
+		height : 200px;
+		position : relative;
+		top : 50%;
+		margin-top: -100px;
+		text-align : center;
+	}
+
+	.thumbnail {
+		width : 100px;
+		height : 100px;
+		display : inline-block;
+		margin : 3px;
+	}
+
+	.thumbnail-box {
+		border : 1px ;
+	}
+
+	.navigation {
+		margin : 6px;
+		color: black;
+	}
+
+	#map-canvas { 
+		height : 100% ; 
+		}
+
+	#trip-image { 
+		width : 100% ;
+		}
+
+	#trip-image-div { 
+		overflow : hidden ;
+		}
+
+	#trip-pane {
+
+	}
+
+	#trip-info {
+		height : 100%;
+	}
+
+
+	#pin-info  { 
+		height : 100%;
+		display: none;
+		}
+
+	.show-pin-image {
+		height : 10% ;
+	}
+
+	.show-trip-image {
+		height : 30% ;
+	}
+
+	.show-pin-pane {
+		height : 90% ;
+	}
+
+	.show-trip-pane {
+		height : 70% ;
+	}
