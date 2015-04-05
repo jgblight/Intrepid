@@ -7,6 +7,7 @@
 {% endblock %}
 
 {% block script_functions %}
+{% load imagekit %}
 	var pins = [
 	{% for p in trip.pins %}
 		{ 
@@ -18,8 +19,8 @@
 		lon : {{p.location.lon}},
 		media : [
 		{% for m in p.media_set.all %}
-			{ previewUrl : "{{ m.image.pin_display.url }}",
-			  url : "{{ m.image.media.url }}" },
+			{ previewUrl : "{{ m.preview_url }}",
+			  url : "{{ m.url }}" },
 		{% endfor %}
 		]
 		},
@@ -172,7 +173,7 @@
 	  		<h3 class="subtitle">Pins</h3>
 	  		{% for p in trip.pins %}
 		  		<div class="item pin-item hover" id="pin_{{p.id}}">
-		  			<img class="pin-item-img" src="{{p.thumbnail_url}}">
+		  			<img class="pin-item-img" src="{{p.thumbnail_url}}" height="100" width="100">
 	        		<p class="item-main pin-main">{{p.name}} <span class="tiny-text">{{p.pin_date.date|date:"d/m/y" }}</span></p>
 					{% if edit %}
 	        		<div class="dropdown glyph-wrapper">

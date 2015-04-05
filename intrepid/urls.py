@@ -27,6 +27,7 @@ urlpatterns += patterns('intrepid_app.views',
     url(r'^trip/(?P<trip_id>[0-9]+)/reactivate$','reactivate_view'),
     url(r'^trip/(?P<trip_id>[0-9]+)/delete$','delete_trip_view'),
     url(r'^file_upload$','file_upload_view'),
+    url(r'^sign_s3/$','sign_s3'),
     url(r'^pin/(?P<pin_id>[0-9]+)/delete$','delete_pin_view'))
 
 urlpatterns += patterns('intrepid_app.api',

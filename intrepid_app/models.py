@@ -89,8 +89,6 @@ class Trip(models.Model):
 
     def get_map_params(self):
         pins = self.pins()
-        center_lat = 0.0;
-        center_lon = 0.0;
         lat = []
         lon = []
         if len(pins):
@@ -122,15 +120,24 @@ class Pin(models.Model):
     def thumbnail_url(self):
         if self.media_set.count() > 0:
             img = self.media_set.first()
-            return img.image.pin_display.url
+            return img.image.thumbnail_url()
         else:
-            return "http://placekitten.com/100/100"
+            return "http://placehold.it/100x100"
 
 class Media(models.Model):
     pin = models.ForeignKey(Pin,blank=True,null=True)
     caption = models.CharField(max_length=200,blank=True)
 
+    def preview_url(self):
+        return self.image.thumbnail_url()
+
+    def url(self):
+        return self.image.media.url
+
 class Image(Media):
     media = models.ImageField(upload_to="post_data")
     pin_display = ImageSpecField(source='media', id="pin_display")
+
+    def thumbnail_url(self):
+        return self.pin_display.url
 

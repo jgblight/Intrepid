@@ -88,7 +88,6 @@
       {% if pin.tracks %}
         pathArr.push(loc);
       {% endif %}
-    {% endfor %}
 
     var poly = new google.maps.Polyline({
       path: pathArr,
@@ -97,6 +96,8 @@
       strokeWeight: 2
     });
     poly.setMap(map);
+
+    {% endfor %}
 
     {% if trip.active %}
     $("#finish_{{trip.id}}").click(function(){finishTrip({{trip.id}})});

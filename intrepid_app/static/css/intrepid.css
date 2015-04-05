@@ -254,6 +254,7 @@
 
 	.pin-item-img {
 		width : 35px;
+		height: auto;
 		margin: 0;
 		padding: 0;
 		display: inline-block;

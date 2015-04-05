@@ -1,11 +1,19 @@
-import datetime
+import base64
+import time
+import os
+import urllib
+import hmac
+import uuid
+from hashlib import sha1
 from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
-from intrepid_app.models import Profile,Trip, Pin,Location,Media,Image
+from intrepid_app.models import Trip, Pin, Location, Image
 from django.http import HttpResponse
+from django.conf import settings
+from django.core.files import File
+from django.core.files.temp import NamedTemporaryFile
 import forms
 import json
 
@@ -98,13 +106,17 @@ def new_post_view(request,trip_id):
             pin_date = form.cleaned_data['date']
             tracks = form.cleaned_data['tracks']
             text = form.cleaned_data['description']
-            pin = Pin(trip=trip,name=name,pin_date=pin_date,location=location,tracks=tracks,text=text)
-            pin.save()
+            pin = Pin.objects.create(trip=trip,name=name,pin_date=pin_date,location=location,tracks=tracks,text=text)
 
-            for media_id in request.POST.getlist('uploads',[]):
-                media = Media.objects.get(pk=int(media_id))
-                media.pin = pin
-                media.save()
+            urls = request.POST.get("upload-urls").strip("|").split("|")
+
+            for url in urls:
+                image = Image.objects.create(pin=pin)
+                img_temp = NamedTemporaryFile(delete = True)
+                img_temp.write(urllib.urlopen(url).read())
+                img_temp.flush()
+                image.media.save("image_{}".format(image.pk), File(img_temp))
+
             return redirect('/trip/'+str(trip_id)+'?post=last') 
     else:
         form = forms.NewPostForm()
@@ -162,6 +174,28 @@ def delete_pin_view(request,pin_id):
     response = json.dumps(response)
     return HttpResponse(response, mimetype='application/json')
 
+
+def sign_s3(request):
+    AWS_ACCESS_KEY = os.environ.get('AWS_ACCESS_KEY_ID') or settings.AWS_ACCESS_KEY
+    AWS_SECRET_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY') or settings.AWS_SECRET_KEY
+    S3_BUCKET = os.environ.get('S3_BUCKET') or settings.S3_BUCKET
+
+    object_name = request.user.username + str(uuid.uuid4()).replace("-","")
+    mime_type = request.GET.get('s3_object_type')
+
+    expires = long(time.time()+10)
+    amz_headers = "x-amz-acl:public-read"
+
+    put_request = "PUT\n\n%s\n%d\n%s\n/%s/%s" % (mime_type, expires, amz_headers, S3_BUCKET, object_name)
+
+    signature = base64.encodestring(hmac.new(AWS_SECRET_KEY, put_request, sha1).digest())
+    signature = urllib.quote_plus(signature.strip())
+
+    url = 'https://%s.s3.amazonaws.com/%s' % (S3_BUCKET, object_name)
+    return HttpResponse(json.dumps({
+        'signed_request': '%s?AWSAccessKeyId=%s&Expires=%d&Signature=%s' % (url, AWS_ACCESS_KEY, expires, signature),
+         'url': url
+      }), content_type='application/json')
 
 @login_required
 def file_upload_view(request):
