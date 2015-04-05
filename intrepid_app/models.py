@@ -26,7 +26,7 @@ class Profile(models.Model):
         if self.image:
             return self.image.url
         else:
-            return "http://placekitten.com/400/400"
+            return "http://placehold.it/400x400"
 
     def get_hometown(self):
         if self.hometown:
@@ -68,7 +68,7 @@ class Trip(models.Model):
         if self.image:
             return self.image.url
         else:
-            return "http://placekitten.com/500/300"
+            return "http://placehold.it/500x300"
 
     def start(self):
         first_pin = self.pin_set.first()
