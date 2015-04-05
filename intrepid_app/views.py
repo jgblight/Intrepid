@@ -115,7 +115,7 @@ def new_post_view(request,trip_id):
                 img_temp = NamedTemporaryFile(delete = True)
                 img_temp.write(urllib.urlopen(url).read())
                 img_temp.flush()
-                image.media.save(url.rsplit("/"), File(img_temp))
+                image.media.save(url.rsplit("/")[2], File(img_temp))
 
             return redirect('/trip/'+str(trip_id)+'?post=last') 
     else:
