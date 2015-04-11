@@ -26,7 +26,7 @@ class Profile(models.Model):
         if self.image:
             return self.image.url
         else:
-            return "http://placehold.it/400x400"
+            return "http://lorempixel.com/g/400/400/cats"
 
     def get_hometown(self):
         if self.hometown:
@@ -68,7 +68,7 @@ class Trip(models.Model):
         if self.image:
             return self.image.url
         else:
-            return "http://placehold.it/500x300"
+            return "http://lorempixel.com/g/500/300/cats"
 
     def start(self):
         first_pin = self.pin_set.first()
@@ -126,7 +126,7 @@ class Pin(models.Model):
             img = self.media_set.first()
             return img.image.thumbnail_url()
         else:
-            return "http://placehold.it/100x100"
+            return "http://lorempixel.com/g/100/100/cats"
 
 
 class Media(models.Model):

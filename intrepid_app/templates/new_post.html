@@ -1,7 +1,10 @@
 {% extends 'map_base.html' %}
 
   {% block dependencies %}
-  <script src="/static/js/s3upload.js"></script>
+  <link rel="stylesheet" href="/static/css/jquery.fileupload.css">
+  <script src="/static/js/upload/vendor/jquery.ui.widget.js"></script>
+  <script src="/static/js/upload/jquery.iframe-transport.js"></script>
+  <script src="/static/js/upload/jquery.fileupload.js"></script>
   {% endblock %}
 
   {% block initialize_map %}
@@ -76,16 +79,22 @@
   $("#id_date").datepicker();
 
 
-  $("#fileupload").change(function(){
-    var s3upload = new S3Upload({
-        file_dom_selector: 'fileupload',
-        s3_sign_put_url: '/sign_s3/',
-        onFinishS3Put: function(url) {
-            $("#empty-message").hide()
-            $("#uploaded").append('<img src="'+url+'" style="width:300px;" />');
-            $("#upload-urls").val($("#upload-urls").val() + url + "|" )
-        },
-    });
+  $('#fileupload').fileupload({
+      dataType: 'json',
+      done: function (e, data) {
+          $("#empty-message").hide()
+          $.each(data.result, function (index, file) {
+              if (file.hasOwnProperty('error')){
+                $('<p/>').text(file.error).appendTo("#uploaded");
+              } else {
+                $('<img/>').attr('src',file.url).addClass("thumbnail").appendTo("#uploaded");
+                $('<input type="hidden" />')
+                  .attr('name','uploads')
+                  .attr('value',file.id)
+                  .appendTo('#post_form')
+              }
+          });
+      }
   });
 
   $("#post_form").submit(function(e){
@@ -116,8 +125,9 @@
       <div id="uploaded"> 
         <p class="blurb" id="empty-message"> No images yet..</p>
       </div>
-      <input id="fileupload" type="file" data-url="/file_upload" multiple>
-      <input id="upload-urls" type="hidden" name="upload-urls">
+      <span class="btn btn-default btn-file fileinput-button"> Add Files
+        <input id="fileupload" type="file" name="files[]" data-url="/file_upload" multiple>
+      </span>
     </div>
     {% field form.description %}
 	<input type="submit" class="btn btn-info" value="Create" />
