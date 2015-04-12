@@ -1,7 +1,11 @@
 Django==1.6.5
 MySQL-python==1.2.5
-Pillow==2.4.0
+Pillow==2.7.0
+PyYAML==3.11
+South==1.0.2
+awsebcli==3.2.1
 boto==2.28.0
+cement==2.4.0
 dj-database-url==0.3.0
 dj-static==0.0.5
 django-appconf==0.6
@@ -9,7 +13,9 @@ django-bootstrap-form==3.1
 django-imagekit==3.2.1
 django-piston==0.2.3
 django-storages==1.1.8
-pilkit==1.1.9
+django-toolbelt==0.0.1
+jmespath==0.6.1
+pilkit==1.1.12
 pystache==0.5.4
 python-dateutil==2.2
 pytz==2014.4
