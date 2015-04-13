@@ -15,11 +15,11 @@ import sys
 def http_basic_auth(func):
     def _wrapped_view_func(request, *args, **kwargs):
         from django.contrib.auth import authenticate, login
-        if not request.is_secure():
-            if getattr(settings, 'HTTPS_SUPPORT', True):
-                request_url = request.build_absolute_uri(request.get_full_path())
-                secure_url = request_url.replace('http://', 'https://')
-                return HttpResponseRedirect(secure_url)
+        #if not request.is_secure():
+        #    if getattr(settings, 'HTTPS_SUPPORT', True):
+        #        request_url = request.build_absolute_uri(request.get_full_path())
+        #        secure_url = request_url.replace('http://', 'https://')
+        #        return HttpResponseRedirect(secure_url)
         if request.META.has_key('HTTP_AUTHORIZATION'):
             authmeth, auth = request.META['HTTP_AUTHORIZATION'].split(' ', 1)
             if authmeth.lower() == 'basic':
