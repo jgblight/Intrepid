@@ -8,8 +8,10 @@ from django.conf import settings
 from dateutil.parser import parse
 import datetime
 import json
-
+import logging
 import sys
+
+logger = logging.getLogger(__name__)
 
 
 def http_basic_auth(func):
@@ -22,8 +24,10 @@ def http_basic_auth(func):
         #        return HttpResponseRedirect(secure_url)
         if request.META.has_key('HTTP_AUTHORIZATION'):
             authmeth, auth = request.META['HTTP_AUTHORIZATION'].split(' ', 1)
+            logger.info(auth)
             if authmeth.lower() == 'basic':
                 auth = auth.strip().decode('base64')
+                logger.info(auth)
                 username, password = auth.split(':', 1)
                 user = authenticate(username=username, password=password)
                 if user:
