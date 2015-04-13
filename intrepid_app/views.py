@@ -96,9 +96,7 @@ def new_post_view(request,trip_id):
         if form.is_valid():
             lat = form.cleaned_data['lat']
             lon = form.cleaned_data['lon']
-            location_name = form.cleaned_data['loc_name']
-            location = Location(lat=lat,lon=lon,name=location_name)
-            location.save()
+            location = Location.objects.create(lat=lat,lon=lon)
 
             name = form.cleaned_data['name']
             pin_date = form.cleaned_data['date']
@@ -205,10 +203,8 @@ def edit_profile_view(request,username):
 
             lat = form.cleaned_data['lat']
             lon = form.cleaned_data['lon']
-            location_name = form.cleaned_data['hometown_name']
-            if lat and lon and location_name:
-                location = Location(lat=lat,lon=lon,name=location_name)
-                location.save()
+            if lat and lon:
+                location = Location.objects.create(lat=lat,lon=lon)
                 profile.hometown = location
 
             if form.cleaned_data['first_name']:

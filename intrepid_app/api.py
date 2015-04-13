@@ -54,9 +54,7 @@ def new_pin_api(request):
         try:
             lat = float(request.POST.get('lat').decode('ascii','ignore'))
             lon = float(request.POST.get('lon').decode('ascii','ignore'))
-            loc_name = request.POST.get('loc_name')
-            location = Location(lat=lat,lon=lon,name=loc_name)
-            location.save()
+            location = Location.objects.create(lat=lat,lon=lon)
         except:
             response = { 'success' : False, 'error' : 'Problem with location' }
 

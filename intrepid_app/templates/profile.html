@@ -45,7 +45,7 @@
 {% endblock %}
 
 {% block initialize_map %}
-    {% if profile_user.profile.hometown.name %}
+    {% if profile_user.profile.hometown %}
       var loc = new google.maps.LatLng({{profile_user.profile.hometown.lat}},{{profile_user.profile.hometown.lon}});
       var zoom = 3;
     {% else %}
@@ -63,7 +63,7 @@
           streetViewControl: false
         };
         map = new google.maps.Map($("#map-canvas")[0], mapOptions);
-    {% if profile_user.profile.hometown.name %}
+    {% if profile_user.profile.hometown %}
 		var marker = new google.maps.Marker({	
 				position: loc,
         icon : { url : '/static/images/home.svg',
@@ -122,7 +122,6 @@
   	</div>
     <div class="header-div">
   	<h2 class="title-text">{{profile_user.profile.get_name}}</h2>
-  	<p class="minor-text">{{profile_user.profile.get_hometown}}</p>
     </div>
   	<div class="blurb"> {{profile_user.profile.text}} </div>
 

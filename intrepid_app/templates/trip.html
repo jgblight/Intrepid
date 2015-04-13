@@ -12,7 +12,6 @@
 		{ 
 		name : "{{ p.name }}",
 		blurb : "{{ p.text|linebreaksbr }}",
-		location : "{{ p.location.name }}",
 		date : "{{ p.pin_date.date }}",
 		lat : {{p.location.lat}},
 		lon : {{p.location.lon}},
@@ -196,7 +195,6 @@
 	  		<div class="header-div">
 	  		<p class="subtitle link hover" id="trip-name"> {{trip.name}} </p>
 	  		<h2 class="title-text" id="pin-title"></h2>
-	  		<p class="minor-text" id="pin-location"> </p>
 	  		<p class="minor-text" id="pin-date"> </p>
 	  		</div>
 

@@ -62,7 +62,6 @@
       searchbox.setTypes(['geocode']);
 
       {% if user.profile.hometown %}
-        $("#id_hometown_name").val("{{user.profile.hometown.name}}")
         var loc = new google.maps.LatLng({{user.profile.hometown.lat}},{{user.profile.hometown.lon}});
         var marker = new google.maps.Marker({ 
           position: loc,
@@ -72,9 +71,8 @@
         });
         marker.setMap(map);
         map.setCenter(loc);
-      {% else %}
-      $("#id_hometown_name").attr("placeholder","Enter your hometown..")
       {% endif %}
+      $("#id_hometown_name").attr("placeholder","Enter your hometown..")
 
       {% if user.profile.text %}
       $("#id_text").val("{{user.profile.text}}")

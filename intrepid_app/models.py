@@ -9,7 +9,6 @@ from imagespecs import Pin_Display
 class Location(models.Model):
     lat = models.FloatField()
     lon = models.FloatField()
-    name = models.CharField(max_length=200)
 
 
 class Profile(models.Model):
@@ -27,12 +26,6 @@ class Profile(models.Model):
             return self.image.url
         else:
             return "http://lorempixel.com/g/400/400/cats"
-
-    def get_hometown(self):
-        if self.hometown:
-            return self.hometown.name
-        else:
-            return ""
 
     def get_name(self):
         if self.user.first_name:
