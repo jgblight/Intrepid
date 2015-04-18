@@ -18,7 +18,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'f%2je)f1y@j9te6ltf8+^=%5(-n)5@ti9@t+cm08sv=ou0jmaa'
-
+ADMIN_ENABLED = False
 
 ALLOWED_HOSTS = []
 

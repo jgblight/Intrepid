@@ -23,8 +23,8 @@ def http_basic_auth(func):
         #        secure_url = request_url.replace('http://', 'https://')
         #        return HttpResponseRedirect(secure_url)
         logger.info(str(request.META))
-        if request.META.has_key('HTTP_AUTHORIZATION'):
-            authmeth, auth = request.META['HTTP_AUTHORIZATION'].split(' ', 1)
+        if request.META.has_key('HTTP_AUTH'):
+            authmeth, auth = request.META['HTTP_AUTH'].split(' ', 1)
             logger.info(auth)
             if authmeth.lower() == 'basic':
                 auth = auth.strip().decode('base64')
