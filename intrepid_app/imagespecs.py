@@ -42,7 +42,7 @@ class Pin_Display(ImageSpec):
     @property 
     def processors(self):
         model, field_name = get_field_info(self.source)
-        min_dim = min(model.media.width,model.media.height)
+        min_dim = min(model.original.width,model.original.height)
         return [SmartCrop(width=min_dim,
                     height=min_dim),
                 ResizeToFill(width=200,height=200)]

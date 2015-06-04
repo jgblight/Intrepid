@@ -2,6 +2,7 @@ import datetime
 from django.db import models
 from django.db.models.signals import post_save
 from django.contrib.auth.models import User
+from django.core.files import File
 from imagekit.models import ImageSpecField
 from imagespecs import Pin_Display
 
@@ -127,15 +128,23 @@ class Media(models.Model):
     caption = models.CharField(max_length=200, blank=True)
 
     def preview_url(self):
-        return "/image/{0}/square".format(self.id)
+        if not self.image.square:
+            self.image.generate()
+        return self.image.square.url
 
     def url(self):
-        return self.image.media.url
+        return self.image.original.url
 
 
 class Image(Media):
-    media = models.ImageField(upload_to="post_data")
-    pin_display = ImageSpecField(source='media', id="pin_display")
+    original = models.ImageField(upload_to="post_data")
+    square = models.ImageField(upload_to="square", null=True)
+    pin_display = ImageSpecField(source='original', id="pin_display")
 
     def thumbnail_url(self):
         return self.pin_display.url
+
+    def generate(self):
+        generator = Pin_Display(source=self.original)
+        self.square.save(str(self.id), File(generator.generate()))
+

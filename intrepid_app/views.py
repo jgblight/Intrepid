@@ -47,7 +47,7 @@ def profile_view(request, username):
 def pin_display_view(request, media_id):
     media = get_object_or_404(Media, pk=media_id)
     generator = Pin_Display(source=media.image.media)
-    return HttpResponse(generator.generate(), mimetype="image/png")
+    return HttpResponse(generator.generate(), mimetype="image/jpeg")
 
 def signup_view(request):
     if request.method == "POST":
@@ -214,8 +214,9 @@ def file_upload_view(request):
         for new_file in files:
             content_type = new_file.content_type.split("/")[0]
             if content_type == "image":
-                media = Image(media=new_file)
+                media = Image(original=new_file)
                 media.save()
+                media.generate()
                 result.append({'id': media.id,
                                'name': new_file.name,
                                'url': media.pin_display.url})
