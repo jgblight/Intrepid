@@ -117,7 +117,7 @@ class Pin(models.Model):
     def thumbnail_url(self):
         if self.media_set.count() > 0:
             img = self.media_set.first()
-            return img.image.thumbnail_url()
+            return img.preview_url()
         else:
             return "http://lorempixel.com/g/100/100/cats"
 
