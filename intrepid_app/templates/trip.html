@@ -101,7 +101,6 @@
 {% block initialize_script %}
 
         var loc,marker;
-        var pathArr = [];
         {% for p in trip.pins %}
         	loc = new google.maps.LatLng({{p.location.lat}},{{p.location.lon}})
 			marker = new google.maps.Marker({	
