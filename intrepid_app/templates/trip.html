@@ -111,9 +111,6 @@
             			anchor : new google.maps.Point(19,33) }
 			});
 			marker.setMap(map);
-			{% if p.tracks %}
-				pathArr.push(loc);
-			{% endif %}
 
 			google.maps.event.addListener(marker, 'click', function() {
 				pinInfo({{ forloop.counter0 }});
@@ -126,14 +123,6 @@
 
 			$("#delete_{{p.id}}").click(function(){deletePin({{p.id}})});
         {% endfor %}
-		
-		poly = new google.maps.Polyline({
-			path: pathArr,
-			strokeColor: "#363535",
-			strokeOpacity: 1.0,
-			strokeWeight: 2
-		});
-		poly.setMap(map);
 
 		$("#slides").slidesjs({
     		width: 200,

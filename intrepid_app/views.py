@@ -10,6 +10,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from intrepid_app.models import Trip, Pin, Location, Image, Media
+from intrepid_app.imagespecs import Pin_Display
 from django.http import HttpResponse
 from django.conf import settings
 import forms
@@ -43,6 +44,10 @@ def profile_view(request, username):
         'edit': username == request.user.username
     })
 
+def pin_display_view(request, media_id):
+    media = get_object_or_404(Media, pk=media_id)
+    generator = Pin_Display(source=media.image.media)
+    return HttpResponse(generator.generate(), mimetype="image/png")
 
 def signup_view(request):
     if request.method == "POST":
