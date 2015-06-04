@@ -127,7 +127,7 @@ class Media(models.Model):
     caption = models.CharField(max_length=200, blank=True)
 
     def preview_url(self):
-        return "/image/{}/square".format(self.id)
+        return "/image/{0}/square".format(self.id)
 
     def url(self):
         return self.image.media.url
