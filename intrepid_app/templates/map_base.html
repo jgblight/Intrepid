@@ -14,8 +14,10 @@
   <script src="//cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/3.0.4/jquery.imagesloaded.min.js"></script>
   <script src="/static/js/scale.fix.js"></script>
   <script src='/static/js/jquery.drag-n-crop.js'></script> 
-	<script type="text/javascript"
-	      src="//maps.googleapis.com/maps/api/js?key=AIzaSyDml8K6lGP_FoE7gH8ffhCAdN8Dkltf1as&libraries=places&sensor=false">
+  <script src='https://api.tiles.mapbox.com/mapbox.js/v2.1.9/mapbox.js'></script>
+  <link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.9/mapbox.css' rel='stylesheet' />
+  <script>
+  L.mapbox.accessToken = "{{ map_access_token }}";
   </script>
   {% block dependencies %}{% endblock %}
   <script type="text/javascript">
@@ -24,7 +26,7 @@
 
     function clearMap() {
       for (var i = 0; i < markerArray.length; i++ ) {
-        markerArray[i].setMap(null);
+        mao.removeLayer(markerArray[i]);
       }
       markerArray.length = [];
     };
@@ -33,16 +35,7 @@
 
   	function initialize() {
       {% block initialize_map %}
-  		var mapOptions = {
-  		      center: new google.maps.LatLng(0,0),
-            zoom: 2,
-            mapTypeId: google.maps.MapTypeId.TERRAIN,
-            mapTypeControl: false,
-            panControl: true,
-            zoomControl: true,
-            streetViewControl: false
-          };
-      map = new google.maps.Map($("#map-canvas")[0], mapOptions);
+      map = L.mapbox.map("map-canvas", "mapbox.outdoors").setView([0,0], 2);
       {% endblock %}
 
       $(".link-item").click(function(){

@@ -38,9 +38,9 @@
 		$("#pin-info").hide();
 		$("#trip-info").show();
 		{% with mp=trip.get_map_params %}
-		map.fitBounds(new google.maps.LatLngBounds(
-			new google.maps.LatLng({{mp.sw.0}},{{mp.sw.1}}),
-			new google.maps.LatLng({{mp.ne.0}},{{mp.ne.1}})
+		map.fitBounds(new L.LatLngBounds(
+			new L.LatLng({{mp.sw.0}},{{mp.sw.1}}),
+			new L.LatLng({{mp.ne.0}},{{mp.ne.1}})
 			));
 		{% endwith %}
 	}
@@ -80,7 +80,7 @@
 		else {
 			pin_div.find("#slides").hide();
 		}
-		map.setCenter(new google.maps.LatLng(info.lat, info.lon));
+		map.setView(new L.LatLng(info.lat, info.lon));
 		showPin();
 	};
 
@@ -102,17 +102,11 @@
 
         var loc,marker;
         {% for p in trip.pins %}
-        	loc = new google.maps.LatLng({{p.location.lat}},{{p.location.lon}})
-			marker = new google.maps.Marker({	
-				position: loc,
-				icon : { url : '/static/images/pin_2.svg',
-						scaledSize : new google.maps.Size(40,40,'px','px'),
-						size : new google.maps.Size(40,40,'px','px'),
-            			anchor : new google.maps.Point(19,33) }
-			});
-			marker.setMap(map);
+        	loc = new L.LatLng({{p.location.lat}},{{p.location.lon}})
+			marker = new L.Marker(loc);
+			map.addLayer(marker);
 
-			google.maps.event.addListener(marker, 'click', function() {
+			marker.on('click', function() {
 				pinInfo({{ forloop.counter0 }});
 			});
 			$("#pin_{{p.id}}").click(function(e){

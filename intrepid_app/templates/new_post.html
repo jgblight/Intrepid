@@ -5,21 +5,15 @@
   <script src="/static/js/upload/vendor/jquery.ui.widget.js"></script>
   <script src="/static/js/upload/jquery.iframe-transport.js"></script>
   <script src="/static/js/upload/jquery.fileupload.js"></script>
+  <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places"></script>
   {% endblock %}
 
   {% block initialize_map %}
-      var mapOptions = {
-            mapTypeId: google.maps.MapTypeId.TERRAIN,
-            mapTypeControl: false,
-            panControl: true,
-            zoomControl: true,
-            streetViewControl: false
-      };
-      map = new google.maps.Map($("#map-canvas")[0], mapOptions);
+      map = new L.mapbox.map("map-canvas", "mapbox.outdoors");
       {% with mp=trip.get_map_params %}
-      map.fitBounds(new google.maps.LatLngBounds(
-      new google.maps.LatLng({{mp.sw.0}},{{mp.sw.1}}),
-      new google.maps.LatLng({{mp.ne.0}},{{mp.ne.1}})
+      map.fitBounds(new L.LatLngBounds(
+      new L.LatLng({{mp.sw.0}},{{mp.sw.1}}),
+      new L.LatLng({{mp.ne.0}},{{mp.ne.1}})
       ));
       {% endwith %}
   {% endblock %}
@@ -27,7 +21,6 @@
   {% block initialize_script %}
   {% load imagekit %}
   var loc,marker;
-  var pathArr = [];
 
   var icon = { url : '/static/images/pin_2.svg',
         scaledSize : new google.maps.Size(40,40,'px','px'),
@@ -35,40 +28,27 @@
         anchor : new google.maps.Point(19,33) }
 
   {% for p in trip.pins %}
-    loc = new google.maps.LatLng({{p.location.lat}},{{p.location.lon}})
-    marker = new google.maps.Marker({ 
-      position: loc,
-      icon : icon
-      });
-    marker.setMap(map);
-    {% if p.tracks %}
-      pathArr.push(loc);
-    {% endif %}
+    loc = new L.LatLng({{p.location.lat}},{{p.location.lon}})
+    marker = new L.Marker(loc);
+    map.addLayer(marker);
   {% endfor %}
 
-  poly = new google.maps.Polyline({
-      path: pathArr,
-      strokeColor: "#363535",
-      strokeOpacity: 1.0,
-      strokeWeight: 2
-    });
-  poly.setMap(map);
-
 	var searchbox = new google.maps.places.Autocomplete(document.getElementById("id_loc_name"));
+  var pinSet = false;
+  var marker = new L.Marker(new L.LatLng(0,0));
 
 	google.maps.event.addListener(searchbox, 'place_changed', function() {
     clearMap();
 		var place = searchbox.getPlace();
 		$("#id_lat").val(place.geometry.location.lat());
 		$("#id_lon").val(place.geometry.location.lng());
-		var marker = new google.maps.Marker({
-			position: place.geometry.location,
-			title: place.name,
-			map: map,
-      icon: icon
-		});
-		map.setCenter(marker.getPosition());
-    markerArray.push(marker);
+    var loc = new L.LatLng(place.geometry.location.lat(), place.geometry.location.lng()); 
+		marker.setLatLng(loc);
+    if (!pinSet) {
+      map.addLayer(marker);
+      pinSet = true;
+    }
+		map.setView(loc);
 	});	
 
   $("input").addClass("form-control")

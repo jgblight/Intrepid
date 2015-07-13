@@ -46,56 +46,23 @@
 
 {% block initialize_map %}
     {% if profile_user.profile.hometown %}
-      var loc = new google.maps.LatLng({{profile_user.profile.hometown.lat}},{{profile_user.profile.hometown.lon}});
+      var loc = [{{profile_user.profile.hometown.lat}},{{profile_user.profile.hometown.lon}}];
       var zoom = 3;
     {% else %}
-      var loc = new google.maps.LatLng(0,0);
+      var loc = [0,0];
       var zoom = 2;
     {% endif %}
 
-		var mapOptions = {
-		      center: loc,
-          zoom: zoom,
-          mapTypeId: google.maps.MapTypeId.TERRAIN,
-          mapTypeControl: false,
-          panControl: true,
-          zoomControl: true,
-          streetViewControl: false
-        };
-        map = new google.maps.Map($("#map-canvas")[0], mapOptions);
+    map = new L.mapbox.map("map-canvas", "mapbox.outdoors").setView(loc, zoom);
     {% if profile_user.profile.hometown %}
-		var marker = new google.maps.Marker({	
-				position: loc,
-        icon : { url : '/static/images/home.svg',
-            scaledSize : new google.maps.Size(26,26,'px','px'),
-            size : new google.maps.Size(26,26,'px','px') }
-			});
-		marker.setMap(map);
+		var marker = new L.Marker(loc);
+		map.addLayer(marker);
     {% endif %}
     {% for trip in profile_user.trip_set.all %}
-    var pathArr = [];
     {% for pin in trip.pins %}
-      loc = new google.maps.LatLng({{pin.location.lat}},{{pin.location.lon}})
-      marker = new google.maps.Marker({ 
-        position: loc,
-        icon : { url : '/static/images/pin_2.svg',
-            scaledSize : new google.maps.Size(40,40,'px','px'),
-            size : new google.maps.Size(40,40,'px','px'),
-            anchor : new google.maps.Point(19,33) }
-      });
-      marker.setMap(map);
-
-      {% if pin.tracks %}
-        pathArr.push(loc);
-      {% endif %}
-
-    var poly = new google.maps.Polyline({
-      path: pathArr,
-      strokeColor: "#363535",
-      strokeOpacity: 1.0,
-      strokeWeight: 2
-    });
-    poly.setMap(map);
+      loc = new L.LatLng({{pin.location.lat}},{{pin.location.lon}})
+      marker = new L.Marker(loc);
+      map.addLayer(marker);
 
     {% endfor %}
 

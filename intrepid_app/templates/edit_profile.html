@@ -2,6 +2,7 @@
 
 {% block dependencies %}
   <script src='/static/js/filestyle.js'></script> 
+  <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places"></script>
 {% endblock %}
 
   {% block script_functions %}
@@ -62,16 +63,13 @@
       searchbox.setTypes(['geocode']);
 
       {% if user.profile.hometown %}
-        var loc = new google.maps.LatLng({{user.profile.hometown.lat}},{{user.profile.hometown.lon}});
-        var marker = new google.maps.Marker({ 
-          position: loc,
-          icon : { url : '/static/pin_2.svg',
-            scaledSize : new google.maps.Size(26,39,'px','px'),
-            size : new google.maps.Size(26,39,'px','px') }
-        });
-        marker.setMap(map);
-        map.setCenter(loc);
+        var loc = new L.LatLng({{user.profile.hometown.lat}},{{user.profile.hometown.lon}});
+      {% else %}
+        var loc = new L.LatLng(0,0);
       {% endif %}
+        var marker = new L.Marker(loc);
+        map.addLayer(marker);
+        map.setView(loc);
       $("#id_hometown_name").attr("placeholder","Enter your hometown..")
 
       {% if user.profile.text %}
@@ -84,12 +82,9 @@
         var place = searchbox.getPlace();
         $("#id_lat").val(place.geometry.location.lat());
         $("#id_lon").val(place.geometry.location.lng());
-        var marker = new google.maps.Marker({
-          position: place.geometry.location,
-          title: place.name,
-          map: map
-        });
-        map.setCenter(marker.getPosition());
+        var loc = new L.LatLng(place.geometry.location.lat(), place.geometry.location.lng())
+        marker.setLatLng(loc);
+        map.setView(loc);
 
       }); 
 

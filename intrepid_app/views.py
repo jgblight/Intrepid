@@ -29,8 +29,9 @@ def trip_view(request, trip_id):
     trip = get_object_or_404(Trip, pk=trip_id)
     content = {
         'trip': trip,
-        'edit': trip.user.username == request.user.username}
-    if request.GET.has_key('post'):
+        'edit': trip.user.username == request.user.username,
+        'map_access_token': settings.MAPBOX_TOKEN}
+    if 'post' in request.GET:
         if request.GET['post'] == 'last':
             content['post'] = trip.pin_set.count() - 1
         else:
@@ -41,7 +42,8 @@ def trip_view(request, trip_id):
 def profile_view(request, username):
     return render(request, 'profile.html', {
         'profile_user': User.objects.get(username=username),
-        'edit': username == request.user.username
+        'edit': username == request.user.username,
+        'map_access_token': settings.MAPBOX_TOKEN
     })
 
 def pin_display_view(request, media_id):
@@ -97,7 +99,8 @@ def new_trip_view(request):
     else:
         form = forms.TripForm()
     return render(request, 'new_trip.html', {
-        'form': form
+        'form': form,
+        'map_access_token': settings.MAPBOX_TOKEN
     })
 
 
@@ -130,7 +133,8 @@ def new_post_view(request, trip_id):
         form = forms.NewPostForm()
     return render(request, 'new_post.html', {
         'trip': trip,
-        'form': form
+        'form': form,
+        'map_access_token': settings.MAPBOX_TOKEN
     })
 
 
@@ -270,5 +274,6 @@ def edit_profile_view(request, username):
         form = forms.EditProfileForm()
     return render(request, 'edit_profile.html', {
         'profile_user': User.objects.get(username=username),
-        'form': form
+        'form': form,
+        'map_access_token': settings.MAPBOX_TOKEN
     })
