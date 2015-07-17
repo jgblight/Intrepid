@@ -114,27 +114,19 @@ LOGGING = {
     # How to format the output
     'formatters': {
         'standard': {
-            'format' : "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
-            'datefmt' : "%d/%b/%Y %H:%M:%S"
+            'format': "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
+            'datefmt': "%d/%b/%Y %H:%M:%S"
         },
     },
     # Log handlers (where to go)
     'handlers': {
         'null': {
-            'level':'DEBUG',
-            'class':'django.utils.log.NullHandler',
+            'level': 'DEBUG',
+            'class': 'django.utils.log.NullHandler',
         },
-        'log_file': {
-            'level':'DEBUG',
-            'class':'logging.handlers.RotatingFileHandler',
-            'filename': DEBUG_LOG_DIR,
-            'maxBytes': 50000,
-            'backupCount': 2,
-            'formatter': 'standard',
-        },
-        'console':{
-            'level':'INFO',
-            'class':'logging.StreamHandler',
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
             'formatter': 'standard'
         },
         'mail_admins': {
@@ -145,17 +137,17 @@ LOGGING = {
     # Loggers (where does the log come from)
     'loggers': {
         'django': {
-            'handlers':['console', 'log_file'],
+            'handlers': ['console'],
             'propagate': True,
-            'level':'INFO',
+            'level': 'INFO',
         },
         'django.db.backends': {
-            'handlers': ['console', 'log_file'],
+            'handlers': ['console'],
             'level': 'WARN',
             'propagate': False,
         },
         '': {
-            'handlers': ['console', 'log_file'],
+            'handlers': ['console'],
             'level': 'DEBUG',
         },
     }
