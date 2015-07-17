@@ -52,6 +52,7 @@ coverage.xml
 *.pot
 intrepid/media/*
 media/*
+venv/*
 
 # Sphinx documentation
 docs/_build/
