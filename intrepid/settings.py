@@ -22,6 +22,7 @@ ADMIN_ENABLED = False
 
 ALLOWED_HOSTS = []
 
+MAPBOX_TOKEN = os.environ['MAPBOX_TOKEN']
 
 # Application definition
 
