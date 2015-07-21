@@ -63,7 +63,7 @@ class Trip(models.Model):
             return self.image.url
         else:
             if self.pin_set.count():
-                self.pin_set.order_by('?')[0].media_set.all()[0].url()
+                return self.pin_set.order_by('?')[0].media_set.all()[0].url()
             else:
                 return "http://lorempixel.com/g/500/300/cats"
 
