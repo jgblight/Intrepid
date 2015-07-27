@@ -26,7 +26,7 @@
 
     function clearMap() {
       for (var i = 0; i < markerArray.length; i++ ) {
-        mao.removeLayer(markerArray[i]);
+        map.removeLayer(markerArray[i]);
       }
       markerArray.length = [];
     };
@@ -85,10 +85,10 @@
   </div>
 </div>
 <div class="row width-fill main">
-  <div class="col-xs-8 col-sm-9 fill">
+  <div class="col-xs-8 col-sm-8 fill">
 	<div id="map-canvas"></div>
   </div>
-  <div class="col-xs-4 col-sm-3 fill info-div">
+  <div class="col-xs-4 col-sm-4 fill info-div">
     {% block content %}{% endblock %}
   </div>
 </div>

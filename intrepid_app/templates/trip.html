@@ -4,12 +4,18 @@
 <link href='/static/css/popup.css' rel='stylesheet' type='text/css'>
 <script src="/static/js/jquery.slides.js"></script>
 <script src="/static/js/popup.js"></script>
+<script src="/static/js/jquery.mousewheel.min.js"></script>
 {% endblock %}
 
 {% block script_functions %}
-	var pins = [
+var accumulatedScroll = 0;
+var delta = 5;
+var currentPin = -1;
+
+var pins = [
 	{% for p in trip.pins %}
 		{ 
+		id : "{{ p.id }}",
 		name : "{{ p.name }}",
 		blurb : "{{ p.text|linebreaksbr }}",
 		date : "{{ p.pin_date.date }}",
@@ -25,170 +31,158 @@
 	{% endfor %}
 	];
 
-	function showPin() {
-		$("#trip-pane").removeClass("show-trip-pane").addClass("show-pin-pane");
-		$("#trip-image-div").removeClass("show-trip-image").addClass("show-pin-image");
-		$("#trip-info").hide();
-		$("#pin-info").show();
-	};
+function resizeElement(selector, size) {
+	$(selector).width(size);
+	$(selector).height(size);
+};
 
-	function showTrip() {
-		$("#trip-pane").removeClass("show-pin-pane").addClass("show-trip-pane");
-		$("#trip-image-div").removeClass("show-pin-image").addClass("show-trip-image");
-		$("#pin-info").hide();
-		$("#trip-info").show();
-		{% with mp=trip.get_map_params %}
-		map.fitBounds(new L.LatLngBounds(
-			new L.LatLng({{mp.sw.0}},{{mp.sw.1}}),
-			new L.LatLng({{mp.ne.0}},{{mp.ne.1}})
-			));
-		{% endwith %}
+function expandPin(index) {
+	currentPin = index;
+	var pin = pins[index];
+	var small_div = "#pin_" + pin.id + "_small";
+	var large_div = "#pin_" + pin.id + "_large";
+	$(".pin-large").hide();
+	$(".pin-small").show();
+	$(small_div).hide();
+	$(large_div).show();
+	var img_size = $(large_div).width();
+	map.panTo(new L.LatLng(pin.lat, pin.lon));
+	map.setZoom(14);
+
+	$("#slides").removeAttr("id","#slides");
+
+	$('.info-div').animate({
+    	scrollTop: $(large_div).offset().top + $('.info-div').scrollTop() - $('.info-div').offset().top - 10
+	}, 400);
+
+
+	if ( pin.media.length > 1 ) {
+		$(large_div).children(".slides").attr("id", "slides");
+		$("#slides").width(img_size);
+		$("#slides").slidesjs({
+			width: img_size,
+			height: img_size,
+			navigation: {active:false, effect:"fade"},
+			pagination: {active:false},
+		});
+		resizeElement(".slidesjs-container", img_size);
+		resizeElement(".slidesjs-control", img_size);
+		$('.slidesjs-control').magnificPopup({
+			delegate: 'img',
+		    gallery: {
+		    	  enabled: true
+			},
+	    	type: 'image'
+		});
 	}
+	else {
+		$(".insert-image").magnificPopup({type:'image'});
+	}
+	resizeElement(".insert-image", img_size);
+	currentScrollTop = $(".info-div").scrollTop();
+}
 
-	function pinInfo(index) {
-		var info = pins[index];
-		var pin_div = $("#pin-info");
-		pin_div.find("#pin-title").html(info.name);
-		pin_div.find("#pin-location").html(info.location);
-		pin_div.find("#pin-date").html(info.date);
-		pin_div.find("#pin-blurb").html(info.blurb);
-		if ( info.media.length > 0 ) {
-			var items = [];
-			$(".slidesjs-control").empty();
-			for (var i = 0; i < info.media.length; i++) {
-				$("<img />").attr("src",info.media[i].previewUrl).attr("href",info.media[i].url).addClass('insert-image').appendTo(".slidesjs-control");
-			}
-			$("#slides").show();
-			if (info.media.length > 1) {
+{% endblock %}
 
-				$("#slides").slidesjs('refresh');
-				$(".slidesjs-navigation").show();
-				$('.slidesjs-control').magnificPopup({
-				    delegate: 'img',
-				    gallery: {
-				      enabled: true
-				    },
-			    type: 'image' // this is default type
-			});
-			}
-			else {
-				$(".slidesjs-navigation").hide();
-				$(".insert-image").magnificPopup({type:'image'});
-			}
-
-		}
-		else {
-			pin_div.find("#slides").hide();
-		}
-		map.setView(new L.LatLng(info.lat, info.lon));
-		showPin();
-	};
-
-	function deletePin(pin_id) {
-	    var url = "/pin/" + pin_id + "/delete";
-	    $.post(url,{csrfmiddlewaretoken:'{{csrf_token}}' },function(data){
-	      if (data.success) {
-	        $("#pin_" + pin_id).hide();
-	      } else {
-	        alert("Failed to delete pin");
-	      }
-	    }).fail(function() {
-	      alert("Failed to delete pin");
-	    });
-	  };
+{% block initialize_map %}
+	map = new L.mapbox.map("map-canvas", "mapbox.outdoors");
+	{% with mp=trip.get_map_params %}
+	map.fitBounds(new L.LatLngBounds(
+	new L.LatLng({{mp.sw.0}},{{mp.sw.1}}),
+	new L.LatLng({{mp.ne.0}},{{mp.ne.1}})
+	));
+	{% endwith %}
 {% endblock %}
 
 {% block initialize_script %}
+    var loc,marker;
+    {% for p in trip.pins %}
+    	loc = new L.LatLng({{p.location.lat}},{{p.location.lon}})
+		marker = new L.Marker(loc);
+		map.addLayer(marker);
 
-        var loc,marker;
-        {% for p in trip.pins %}
-        	loc = new L.LatLng({{p.location.lat}},{{p.location.lon}})
-			marker = new L.Marker(loc);
-			map.addLayer(marker);
+		marker.on('click', function() {
+			expandPin({{ forloop.counter0 }});
+		});
+		$("#pin_{{p.id}}_small").click(function(e){
+   			expandPin({{ forloop.counter0 }});
+		});
 
-			marker.on('click', function() {
-				pinInfo({{ forloop.counter0 }});
-			});
-			$("#pin_{{p.id}}").click(function(e){
-			    if (!$(e.target).parent().hasClass("drop-link")){
-       				pinInfo({{ forloop.counter0 }});
-      			}
-			});
+		$("#delete_{{p.id}}").click(function(){deletePin({{p.id}})});
+    {% endfor %}
 
-			$("#delete_{{p.id}}").click(function(){deletePin({{p.id}})});
-        {% endfor %}
+	$('.info-div').mousewheel(function(event) {
+		console.log(event.deltaY);
+		accumulatedScroll = accumulatedScroll + event.deltaY;
+		 if ( accumulatedScroll < -35){
+			if ( currentPin < {{ trip.pins.count }}) {
+			 	expandPin(currentPin+1);
+			}
+		 	accumulatedScroll = 0;
+		 }
+		 if ( accumulatedScroll > 35) {
+			if ( currentPin > 0) {
+			 	expandPin(currentPin-1)
+			}
+		 	accumulatedScroll = 0;
+		 }
+		event.preventDefault();
 
-		$("#slides").slidesjs({
-    		width: 200,
-    		height: 200,
-    		navigation: {active:false, effect:"fade"},
-    		pagination: {active:false},
-    	});
-
-		$("#trip-name").click(showTrip);
-		$("#trip-image-div").click(showTrip);
-
-		{% if post %}
-			pinInfo({{post}});
-		{% else %}
-			showTrip();
-		{% endif %}
+	});
 
 {% endblock %}
 
 {% block content %}
-  	<div id="trip-image-div" class="hover"> 
-  		<img id="trip-image" src="{{trip.get_image_url}}" />
+	<div id="trip-image-div" class="hover"> 
+		<img id="trip-image" src="{{trip.get_image_url}}" />
+	</div>
+	<div id="trip-pane">
+	<div class="header-div">
+	  	<p class="minor-text link hover link-item" href="/profile/{{trip.user.username}}">{{trip.user.profile.get_name}}</p>
+  		<h2 class="title-text">{{trip.name}}</h2>
+  		<p class="minor-text"> {{trip.start}} - {{trip.end}}</p>
   	</div>
-
-  	<div id="trip-pane">
-	  	<div id="trip-info">
-	  		<div class="header-div">
-		  	<p class="minor-text link hover link-item" href="/profile/{{trip.user.username}}">{{trip.user.profile.get_name}}</p>
-	  		<h2 class="title-text">{{trip.name}}</h2>
-	  		<p class="minor-text"> {{trip.start}} - {{trip.end}}</p>
-	  		</div>
-	  		<div class="blurb">{{trip.text}}</div>
-	  		<div class="item-list">
-	  		<h3 class="subtitle">Pins</h3>
-	  		{% for p in trip.pins %}
-		  		<div class="item pin-item hover" id="pin_{{p.id}}">
+  	<div class="blurb">{{trip.text}}</div>
+  	<div class="item-list">
+  		<h3 class="subtitle">Pins</h3>
+  		{% for p in trip.pins %}
+  			<div class="item pin-container">
+		  		<div class="item pin-item pin-small hover" id="pin_{{p.id}}_small">
 		  			<img class="pin-item-img" src="{{p.thumbnail_url}}" height="100" width="100">
 	        		<p class="item-main pin-main">{{p.name}} <span class="tiny-text">{{p.pin_date.date|date:"d/m/y" }}</span></p>
-					{% if edit %}
-	        		<div class="dropdown glyph-wrapper">
-			          <span class="link glyphicon glyphicon-pencil glyph-button dropdown-toggle" id="dLabel_{{p.id}}" data-toggle="dropdown"></span>
-			          <ul class="dropdown-menu right-menu" role="menu" aria-labelledby="dLabel_{{p.id}}">
-						<li class="drop-link"> <a href="#" id="delete_{{p.id}}"> Delete Pin </a> </li>
-			          </ul>
-	        		</div>
-	        		{% endif %}
 		        </div>
-		    {% empty %}
-		    <p class="blurb">No pins yet..</p>
-	  		{% endfor %}
+		        <div class="item pin-item pin-large" id="pin_{{p.id}}_large">
+		        	<div class="insert-holder slides">
+		        		{% for m in p.media_set.all %}
+			        		<img class="insert-image" src="{{ m.preview_url }}" href="{{ m.url }}" />
+			        	{% endfor %}
+			        	{% if p.media_set.count > 1 %}
+  						<a href="#" class="slidesjs-previous slidesjs-navigation navigation"><span class="glyphicon glyphicon-chevron-left"></span></a>
 
-	  		{% if trip.active and edit %}
-    		<a class="btn btn-primary" href="/trip/{{trip.id}}/post">New Pin</a>
-    		{% endif %}
-	  		</div>
-	  	</div>
-	  	<div id="pin-info">
-	  		<div class="header-div">
-	  		<p class="subtitle link hover" id="trip-name"> {{trip.name}} </p>
-	  		<h2 class="title-text" id="pin-title"></h2>
-	  		<p class="minor-text" id="pin-date"> </p>
-	  		</div>
+  						<a href="#" class="slidesjs-next slidesjs-navigation navigation"><span class="glyphicon glyphicon-chevron-right"></span></a>
+  						{% endif %}
+						</div>
+						<div class="pin-large-text">
+						{% if edit %}
+		        		<div class="dropdown glyph-wrapper">
+				          <span class="link glyphicon glyphicon-pencil glyph-button dropdown-toggle" id="dLabel_{{p.id}}" data-toggle="dropdown"></span>
+				          <ul class="dropdown-menu right-menu" role="menu" aria-labelledby="dLabel_{{p.id}}">
+							<li class="drop-link"> <a href="#" id="delete_{{p.id}}"> Delete Pin </a> </li>
+				          </ul>
+		        		</div>
+	        			{% endif %}
+  						<h2 class="title-text" id="pin-title">{{p.name}}</h2>
+  						<p class="minor-text" id="pin-date">{{p.pin_date.date|date:"d/m/y"}}</p>
+  					</div>
+		        </div>
+	    	</div>
+	    {% empty %}
+	    	<p class="blurb">No pins yet..</p>
+  		{% endfor %}
 
-	  		<div id="slides" class="insert-holder slides">
-	  			<img src="#">
-	  			<a href="#" class="slidesjs-previous slidesjs-navigation navigation"><span class="glyphicon glyphicon-chevron-left"></span></a>
-
-	  			<a href="#" class="slidesjs-next slidesjs-navigation navigation"><span class="glyphicon glyphicon-chevron-right"></span></a>
-  			</div>
-
-  			<div class="blurb" id="pin-blurb"> </div>
-	  	</div>
+  		{% if trip.active and edit %}
+  		<a class="btn btn-primary" href="/trip/{{trip.id}}/post">New Pin</a>
+  		{% endif %}
   	</div>
-
+	</div>
 {% endblock %}
