@@ -45,6 +45,6 @@ class Pin_Display(ImageSpec):
         min_dim = min(model.original.width,model.original.height)
         return [SmartCrop(width=min_dim,
                     height=min_dim),
-                ResizeToFill(width=200,height=200)]
+                ResizeToFill(width=500,height=500)]
 
 register.generator('pin_display', Pin_Display)

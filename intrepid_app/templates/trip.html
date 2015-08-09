@@ -9,6 +9,7 @@
 
 {% block script_functions %}
 var accumulatedScroll = 0;
+var lastScrollEvent = new Date().getTime();
 var delta = 5;
 var currentPin = -1;
 
@@ -46,8 +47,7 @@ function expandPin(index) {
 	$(small_div).hide();
 	$(large_div).show();
 	var img_size = $(large_div).width();
-	map.panTo(new L.LatLng(pin.lat, pin.lon));
-	map.setZoom(14);
+	map.setView(new L.LatLng(pin.lat, pin.lon), 14);
 
 	$("#slides").removeAttr("id","#slides");
 
@@ -112,15 +112,21 @@ function expandPin(index) {
     {% endfor %}
 
 	$('.info-div').mousewheel(function(event) {
-		console.log(event.deltaY);
-		accumulatedScroll = accumulatedScroll + event.deltaY;
-		 if ( accumulatedScroll < -35){
+		var currentTime = new Date().getTime();
+		console.log(lastScrollEvent);
+		if ( currentTime - lastScrollEvent > 3000 ) {
+			accumulatedScroll = event.deltaY;
+		} else {
+			accumulatedScroll = accumulatedScroll + event.deltaY;
+		}
+		lastScrollEvent = currentTime;
+		 if ( accumulatedScroll < -40){
 			if ( currentPin < {{ trip.pins.count }}) {
 			 	expandPin(currentPin+1);
 			}
 		 	accumulatedScroll = 0;
 		 }
-		 if ( accumulatedScroll > 35) {
+		 if ( accumulatedScroll > 40) {
 			if ( currentPin > 0) {
 			 	expandPin(currentPin-1)
 			}
