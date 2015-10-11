@@ -82,6 +82,20 @@ function expandPin(index) {
 	currentScrollTop = $(".info-div").scrollTop();
 }
 
+function deletePin(pin_id) {
+    var url = "/pin/" + pin_id + "/delete";
+    $.post(url,{csrfmiddlewaretoken:'{{csrf_token}}' },function(data){
+      if (data.success) {
+        $("#pin_" + pin_id + "_small").remove();
+        $("#pin_" + pin_id + "_large").remove();
+      } else {
+        alert("Failed to delete pin");
+      }
+    }).fail(function() {
+      alert("Failed to delete pin");
+    });	
+};
+
 {% endblock %}
 
 {% block initialize_map %}
