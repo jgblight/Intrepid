@@ -42,18 +42,26 @@ function expandPin(index) {
 	var pin = pins[index];
 	var small_div = "#pin_" + pin.id + "_small";
 	var large_div = "#pin_" + pin.id + "_large";
-	$(".pin-large").hide();
-	$(".pin-small").show();
+
+
+	console.log($("#pin-list").offset().top);
+	console.log($('.info-div').scrollTop());
+
+	$(".pin-large").stop(true, true).hide(200);
+	$(".pin-small").stop(true, true).show();
+	var img_size = $(small_div).width();
+	var small_height = $(small_div).height();
 	$(small_div).hide();
-	$(large_div).show();
-	var img_size = $(large_div).width();
+	$(large_div).show(200);
 	map.setView(new L.LatLng(pin.lat, pin.lon), 14);
 
 	$("#slides").removeAttr("id","#slides");
 
+	$('.info-div').stop(true, true);
 	$('.info-div').animate({
-    	scrollTop: $(large_div).offset().top + $('.info-div').scrollTop() - $('.info-div').offset().top - 10
+    	scrollTop: $("#pin-list").offset().top + $('.info-div').scrollTop() + small_height*(index-2)
 	}, 400);
+
 
 
 	if ( pin.media.length > 1 ) {
@@ -127,26 +135,32 @@ function deletePin(pin_id) {
 
 	$('.info-div').mousewheel(function(event) {
 		var currentTime = new Date().getTime();
-		console.log(lastScrollEvent);
 		if ( currentTime - lastScrollEvent > 3000 ) {
 			accumulatedScroll = event.deltaY;
 		} else {
 			accumulatedScroll = accumulatedScroll + event.deltaY;
 		}
 		lastScrollEvent = currentTime;
-		 if ( accumulatedScroll < -40){
-			if ( currentPin < {{ trip.pins.count }}) {
-			 	expandPin(currentPin+1);
-			}
-		 	accumulatedScroll = 0;
-		 }
-		 if ( accumulatedScroll > 40) {
-			if ( currentPin > 0) {
-			 	expandPin(currentPin-1)
-			}
-		 	accumulatedScroll = 0;
-		 }
-		event.preventDefault();
+		if ( currentPin <= 0 && accumulatedScroll > 0 ) {
+			currentPin = -1;
+			$('.info-div').stop(true, true);
+		}
+		else {
+			 if ( accumulatedScroll < -50){
+				if ( currentPin < {{ trip.pins.count }}) {
+				 	expandPin(currentPin+1);
+				}
+			 }
+			 else if ( accumulatedScroll > 50) {
+				if ( currentPin > 0) {
+				 	expandPin(currentPin-1);
+				}
+			 }
+			event.preventDefault();
+		}
+		if (accumulatedScroll < -50 || accumulatedScroll > 50) {
+			accumulatedScroll = 0;
+		}
 
 	});
 
@@ -165,6 +179,7 @@ function deletePin(pin_id) {
   	<div class="blurb">{{trip.text}}</div>
   	<div class="item-list">
   		<h3 class="subtitle">Pins</h3>
+  		<div id="pin-list">
   		{% for p in trip.pins %}
   			<div class="item pin-container">
 		  		<div class="item pin-item pin-small hover" id="pin_{{p.id}}_small">
@@ -199,6 +214,7 @@ function deletePin(pin_id) {
 	    {% empty %}
 	    	<p class="blurb">No pins yet..</p>
   		{% endfor %}
+  		</div>
 
   		{% if trip.active and edit %}
   		<a class="btn btn-primary" href="/trip/{{trip.id}}/post">New Pin</a>
