@@ -380,6 +380,7 @@
 
 	#trip-image { 
 		width : 100% ;
+		clip: rect(0px,646px,364px,0px);
 		}
 
 	#trip-image-div { 
