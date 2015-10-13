@@ -4,7 +4,7 @@ from django.db.models.signals import post_save
 from django.contrib.auth.models import User
 from django.core.files import File
 from imagekit.models import ImageSpecField
-from imagespecs import Pin_Display
+from imagespecs import Pin_Display, Header_Image
 
 
 class Location(models.Model):
@@ -51,9 +51,6 @@ class Trip(models.Model):
     user = models.ForeignKey(User)
     name = models.CharField(max_length=200)
     image_file = models.ImageField(upload_to="profile", blank=True, null=True)
-    image = ImageSpecField(source='image_file', id='header_image')
-    image_x = models.FloatField(default=0)
-    image_y = models.FloatField(default=0)
     image_width = models.FloatField(default=1)
     text = models.TextField(blank=True)
     active = models.BooleanField(default=True)
@@ -62,10 +59,11 @@ class Trip(models.Model):
         if self.image_file:
             return self.image_file.url
         else:
-            images = Image.objects.filter(pin__trip=self).order_by('?')
+            images = Image.objects.filter(pin__trip=self).exclude(
+                original__isnull=True).order_by('?')
             if images.count():
 
-                generator = Pin_Display(source=images[0].original)
+                generator = Header_Image(source=images[0].original)
                 self.image_file.save(str(self.id), File(generator.generate()))
                 return self.image_file.url
             else:
@@ -154,4 +152,3 @@ class Image(Media):
     def generate(self):
         generator = Pin_Display(source=self.original)
         self.square.save(str(self.id), File(generator.generate()))
-

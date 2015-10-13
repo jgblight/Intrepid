@@ -27,7 +27,7 @@ class Header_Image(ImageSpec):
     def processors(self):
         model, field_name = get_field_info(self.source)
         crop_width = int(model.original.width)
-        crop_height = min(model.original.height, int(crop_width*9.0/16.0))
+        crop_height = min(model.original.height, int(crop_width*3.0/5.0))
         return [SmartCrop(width=crop_width,
                           height=crop_height)]
 
