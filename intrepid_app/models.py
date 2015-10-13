@@ -59,12 +59,15 @@ class Trip(models.Model):
     active = models.BooleanField(default=True)
 
     def get_image_url(self):
-        if self.image:
-            return self.image.url
+        if self.image_file:
+            return self.image_file.url
         else:
             images = Image.objects.filter(pin__trip=self).order_by('?')
             if images.count():
-                return images[0].original.url
+
+                generator = Pin_Display(source=images[0].original)
+                self.image_file.save(str(self.id), File(generator.generate()))
+                return self.image_file.url
             else:
                 return "http://lorempixel.com/g/500/300/cats"
 
