@@ -36,6 +36,7 @@
   	function initialize() {
       {% block initialize_map %}
       map = L.mapbox.map("map-canvas", "mapbox.outdoors").setView([0,0], 2);
+      map.scrollWheelZoom.disable();
       {% endblock %}
 
       $(".link-item").click(function(){

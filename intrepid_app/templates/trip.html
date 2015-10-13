@@ -13,6 +13,7 @@ var lastScrollEvent = new Date().getTime();
 var delta = 5;
 var currentPin = -1;
 
+var markers = [];
 var pins = [
 	{% for p in trip.pins %}
 		{ 
@@ -43,10 +44,6 @@ function expandPin(index) {
 	var small_div = "#pin_" + pin.id + "_small";
 	var large_div = "#pin_" + pin.id + "_large";
 
-
-	console.log($("#pin-list").offset().top);
-	console.log($('.info-div').scrollTop());
-
 	$(".pin-large").stop(true, true).hide(200);
 	$(".pin-small").stop(true, true).show();
 	var img_size = $(small_div).width();
@@ -62,6 +59,14 @@ function expandPin(index) {
     	scrollTop: $("#pin-list").offset().top + $('.info-div').scrollTop() + small_height*(index-2)
 	}, 400);
 
+	for (i = 0; i < markers.length; i++) { 
+		markers[i].setIcon(L.mapbox.marker.icon({
+		        'marker-color': '#428bca'
+		    }));
+	}
+	markers[index].setIcon(L.mapbox.marker.icon({
+	        'marker-color': '#326999'
+	    }));
 
 
 	if ( pin.media.length > 1 ) {
@@ -108,6 +113,7 @@ function deletePin(pin_id) {
 
 {% block initialize_map %}
 	map = new L.mapbox.map("map-canvas", "mapbox.outdoors");
+	map.scrollWheelZoom.disable();
 	{% with mp=trip.get_map_params %}
 	map.fitBounds(new L.LatLngBounds(
 	new L.LatLng({{mp.sw.0}},{{mp.sw.1}}),
@@ -120,7 +126,10 @@ function deletePin(pin_id) {
     var loc,marker;
     {% for p in trip.pins %}
     	loc = new L.LatLng({{p.location.lat}},{{p.location.lon}})
-		marker = new L.Marker(loc);
+		marker = new L.Marker(loc, {icon: L.mapbox.marker.icon({
+	        'marker-color': '#428bca'
+	    })});
+		markers.push(marker);
 		map.addLayer(marker);
 
 		marker.on('click', function() {
@@ -133,7 +142,7 @@ function deletePin(pin_id) {
 		$("#delete_{{p.id}}").click(function(){deletePin({{p.id}})});
     {% endfor %}
 
-	$('.info-div').mousewheel(function(event) {
+	$('.main').mousewheel(function(event) {
 		var currentTime = new Date().getTime();
 		if ( currentTime - lastScrollEvent > 3000 ) {
 			accumulatedScroll = event.deltaY;
