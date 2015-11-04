@@ -55,13 +55,13 @@
 
     map = new L.mapbox.map("map-canvas", "mapbox.outdoors").setView(loc, zoom);
     {% if profile_user.profile.hometown %}
-		var marker = new L.Marker(loc);
+		var marker = new L.Marker(loc, standardIcon);
 		map.addLayer(marker);
     {% endif %}
     {% for trip in profile_user.trip_set.all %}
     {% for pin in trip.pins %}
       loc = new L.LatLng({{pin.location.lat}},{{pin.location.lon}})
-      marker = new L.Marker(loc);
+      marker = new L.Marker(loc, standardIcon);
       map.addLayer(marker);
 
     {% endfor %}

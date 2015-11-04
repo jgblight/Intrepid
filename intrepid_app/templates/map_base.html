@@ -23,6 +23,9 @@
   <script type="text/javascript">
   	var map;
     var markerArray = [];
+    var standardIcon = {icon: L.mapbox.marker.icon({
+          'marker-color': '#428bca'
+      })}
 
     function clearMap() {
       for (var i = 0; i < markerArray.length; i++ ) {

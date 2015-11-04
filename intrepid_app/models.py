@@ -51,7 +51,6 @@ class Trip(models.Model):
     user = models.ForeignKey(User)
     name = models.CharField(max_length=200)
     image_file = models.ImageField(upload_to="profile", blank=True, null=True)
-    image_width = models.FloatField(default=1)
     text = models.TextField(blank=True)
     active = models.BooleanField(default=True)
 

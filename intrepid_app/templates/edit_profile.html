@@ -2,7 +2,9 @@
 
 {% block dependencies %}
   <script src='/static/js/filestyle.js'></script> 
+  <script src='/static/js/jquery.drag-n-crop.js'></script> 
   <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places"></script>
+  <link rel="stylesheet" href="/static/css/jquery.drag-n-crop.css">
 {% endblock %}
 
   {% block script_functions %}
@@ -13,22 +15,17 @@
                 reader.onload = function (e) {
                     var photo = $('#photo'); 
                     photo.attr('src', e.target.result);
-                    photo.removeClass('insert-image');
-                    photo.dragncrop('destroy');
-                    photo.dragncrop({ 
-                        centered : true ,
-                        instruction : true ,
-                        stop: function(e,pos) {
-                          $("#id_image_x").val(pos.dimension[0]);
-                          $("#id_image_y").val(pos.dimension[1]);
-                        }                       
-                     });
-                    photo.imagesLoaded().done(function(){
-                      var pos = photo.dragncrop("getPosition");
-                      $("#id_image_x").val(pos.dimension[0]);
-                      $("#id_image_y").val(pos.dimension[1]);
-                      
-                    }); 
+                    photo.parent().height(photo.parent().width());
+                    photo.css('border-radius', '0px');
+                    photo.dragncrop({
+                      stop: function() {
+                        var pos = $("#photo").dragncrop('getPosition');
+                        $("#id_image_x").val(pos.dimension[0]);
+                        $("#id_image_y").val(pos.dimension[1]);
+                        
+                      }
+                    });
+
                 }
                 
                 reader.readAsDataURL(input.files[0]);
@@ -67,7 +64,7 @@
       {% else %}
         var loc = new L.LatLng(0,0);
       {% endif %}
-        var marker = new L.Marker(loc);
+        var marker = new L.Marker(loc, standardIcon);
         map.addLayer(marker);
         map.setView(loc);
       $("#id_hometown_name").attr("placeholder","Enter your hometown..")
@@ -86,9 +83,7 @@
         marker.setLatLng(loc);
         map.setView(loc);
 
-      }); 
-
-      $('#photo').dragncrop();
+      });
 
       $("#profile_form").submit(function(e){
       if ($('#id_hometown_name:focus').length){
@@ -100,7 +95,7 @@
 
   {% block content %}
   {% load tags %}
-  	<div class="insert-holder">
+  	<div class="insert-holder profile-image">
       <img class="insert-image" src="{{user.profile.get_image_url}}" id="photo"/>
     </div>
   	<form action="/profile/{{user.username}}/edit" id="profile_form" enctype="multipart/form-data" method="post">{% csrf_token %}

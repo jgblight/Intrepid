@@ -80,27 +80,15 @@ def new_trip_view(request):
             name = form.cleaned_data['name']
             description = form.cleaned_data['description']
 
-            if request.FILES.has_key('image'):
-                image_file = request.FILES['image']
-            else:
-                image_file = None
-
-            x = form.cleaned_data[
-                'image_x'] if form.cleaned_data['image_x'] else 0
-            y = form.cleaned_data[
-                'image_y'] if form.cleaned_data['image_y'] else 0
-            image_width = form.cleaned_data[
-                'image_width'] if form.cleaned_data['image_width'] else 1
-
-            new_trip = Trip(name=name, text=description, user=request.user,
-                            image_file=image_file, image_x=x, image_y=y, image_width=image_width)
+            new_trip = Trip(name=name, text=description, user=request.user)
             new_trip.save()
             return redirect('/trip/' + str(new_trip.id) + '/post')
     else:
         form = forms.TripForm()
     return render(request, 'new_trip.html', {
         'form': form,
-        'map_access_token': settings.MAPBOX_TOKEN
+        'map_access_token': settings.MAPBOX_TOKEN,
+        'user': request.user
     })
 
 
@@ -118,10 +106,8 @@ def new_post_view(request, trip_id):
 
             name = form.cleaned_data['name']
             pin_date = form.cleaned_data['date']
-            tracks = form.cleaned_data['tracks']
-            text = form.cleaned_data['description']
             pin = Pin.objects.create(
-                trip=trip, name=name, pin_date=pin_date, location=location, tracks=tracks, text=text)
+                trip=trip, name=name, pin_date=pin_date, location=location)
 
             for media_id in request.POST.getlist('uploads', []):
                 media = Media.objects.get(pk=int(media_id))

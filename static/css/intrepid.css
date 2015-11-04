@@ -198,7 +198,7 @@
 
 	.control-label-alt {
 		color : #FFFFFF ;
-		font-size: 9pt ;
+		font-size: 10pt ;
 	}
 
 	.btn {
@@ -342,8 +342,7 @@
 		cursor : pointer;
 	}
 
-	.center-block-logo {
-		height : 300px;
+	.center-block {
 		position : relative;
 		top : 50%;
 		margin-top: -150px;
@@ -352,9 +351,6 @@
 
 	.center-block-form {
 		height : 200px;
-		position : relative;
-		top : 50%;
-		margin-top: -100px;
 		text-align : center;
 	}
 

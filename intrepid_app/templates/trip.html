@@ -126,9 +126,7 @@ function deletePin(pin_id) {
     var loc,marker;
     {% for p in trip.pins %}
     	loc = new L.LatLng({{p.location.lat}},{{p.location.lon}})
-		marker = new L.Marker(loc, {icon: L.mapbox.marker.icon({
-	        'marker-color': '#428bca'
-	    })});
+		marker = new L.Marker(loc, standardIcon);
 		markers.push(marker);
 		map.addLayer(marker);
 
