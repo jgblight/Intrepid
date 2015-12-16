@@ -39,60 +39,62 @@ function resizeElement(selector, size) {
 };
 
 function expandPin(index) {
-	currentPin = index;
-	var pin = pins[index];
-	var small_div = "#pin_" + pin.id + "_small";
-	var large_div = "#pin_" + pin.id + "_large";
+	if (index >= 0 && index < pins.length ) {
+		var pin = pins[index];
+		var small_div = "#pin_" + pin.id + "_small";
+		var large_div = "#pin_" + pin.id + "_large";
 
-	$(".pin-large").stop(true, true).hide(200);
-	$(".pin-small").stop(true, true).show();
-	var img_size = $(small_div).width();
-	var small_height = $(small_div).height();
-	$(small_div).hide();
-	$(large_div).show(200);
-	map.setView(new L.LatLng(pin.lat, pin.lon), 14);
+		$(".pin-large").stop(true, true).hide(200);
+		$(".pin-small").stop(true, true).show();
+		var img_size = $(small_div).width();
+		var small_height = $(small_div).height();
+		$(small_div).hide();
+		$(large_div).show(200);
+		map.setView(new L.LatLng(pin.lat, pin.lon), 14);
 
-	$("#slides").removeAttr("id","#slides");
+		$("#slides").removeAttr("id","#slides");
 
-	$('.info-div').stop(true, true);
-	$('.info-div').animate({
-    	scrollTop: $("#pin-list").offset().top + $('.info-div').scrollTop() + small_height*(index-2)
-	}, 400);
+		$('.info-div').stop(true, true);
+		$('.info-div').animate({
+	    	scrollTop: $("#pin-list").offset().top + $('.info-div').scrollTop() + small_height*(index-2)
+		}, 400);
 
-	for (i = 0; i < markers.length; i++) { 
-		markers[i].setIcon(L.mapbox.marker.icon({
-		        'marker-color': '#428bca'
+		for (i = 0; i < markers.length; i++) { 
+			markers[i].setIcon(L.mapbox.marker.icon({
+			        'marker-color': '#428bca'
+			    }));
+		}
+		markers[index].setIcon(L.mapbox.marker.icon({
+		        'marker-color': '#2A5880'
 		    }));
-	}
-	markers[index].setIcon(L.mapbox.marker.icon({
-	        'marker-color': '#2A5880'
-	    }));
 
 
-	if ( pin.media.length > 1 ) {
-		$(large_div).children(".slides").attr("id", "slides");
-		$("#slides").width(img_size);
-		$("#slides").slidesjs({
-			width: img_size,
-			height: img_size,
-			navigation: {active:false, effect:"fade"},
-			pagination: {active:false},
-		});
-		resizeElement(".slidesjs-container", img_size);
-		resizeElement(".slidesjs-control", img_size);
-		$('.slidesjs-control').magnificPopup({
-			delegate: 'img',
-		    gallery: {
-		    	  enabled: true
-			},
-	    	type: 'image'
-		});
+		if ( pin.media.length > 1 ) {
+			$(large_div).children(".slides").attr("id", "slides");
+			$("#slides").width(img_size);
+			$("#slides").slidesjs({
+				width: img_size,
+				height: img_size,
+				navigation: {active:false, effect:"fade"},
+				pagination: {active:false},
+			});
+			resizeElement(".slidesjs-container", img_size);
+			resizeElement(".slidesjs-control", img_size);
+			$('.slidesjs-control').magnificPopup({
+				delegate: 'img',
+			    gallery: {
+			    	  enabled: true
+				},
+		    	type: 'image'
+			});
+		}
+		else {
+			$(".insert-image").magnificPopup({type:'image'});
+		}
+		resizeElement(".insert-image", img_size);
+		currentScrollTop = $(".info-div").scrollTop();
+		currentPin = index;
 	}
-	else {
-		$(".insert-image").magnificPopup({type:'image'});
-	}
-	resizeElement(".insert-image", img_size);
-	currentScrollTop = $(".info-div").scrollTop();
 }
 
 function deletePin(pin_id) {
@@ -113,7 +115,6 @@ function deletePin(pin_id) {
 
 {% block initialize_map %}
 	map = new L.mapbox.map("map-canvas", "mapbox.outdoors");
-	map.scrollWheelZoom.disable();
 	{% with mp=trip.get_map_params %}
 	map.fitBounds(new L.LatLngBounds(
 	new L.LatLng({{mp.sw.0}},{{mp.sw.1}}),
@@ -140,7 +141,7 @@ function deletePin(pin_id) {
 		$("#delete_{{p.id}}").click(function(){deletePin({{p.id}})});
     {% endfor %}
 
-	$('.main').mousewheel(function(event) {
+	$('.info-div').mousewheel(function(event) {
 		var currentTime = new Date().getTime();
 		if ( currentTime - lastScrollEvent > 3000 ) {
 			accumulatedScroll = event.deltaY;
@@ -169,6 +170,15 @@ function deletePin(pin_id) {
 			accumulatedScroll = 0;
 		}
 
+	});
+
+	$('html').keydown(function(event) {
+		var code = event.keyCode || event.which;
+		if (code == 38) {
+			expandPin(currentPin - 1);
+		} else if (code == 40) {
+			expandPin(currentPin + 1);
+		}
 	});
 
 {% endblock %}

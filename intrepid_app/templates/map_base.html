@@ -39,7 +39,6 @@
   	function initialize() {
       {% block initialize_map %}
       map = L.mapbox.map("map-canvas", "mapbox.outdoors").setView([0,0], 2);
-      map.scrollWheelZoom.disable();
       {% endblock %}
 
       $(".link-item").click(function(){
@@ -80,10 +79,6 @@
     </div>
     <div class="header-button-wrapper">
       <a href="/logout" class="btn btn-info" > Log Out</a>
-    </div>
-  {% else %}
-    <div class="header-button-wrapper">
-      <a href="/login" class="btn btn-info" > Log In</a>
     </div>
   {% endif %}
   </div>

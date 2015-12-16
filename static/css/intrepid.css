@@ -234,6 +234,7 @@
 
 	.trip-item {
 		padding-bottom: 5px ;
+		cursor: pointer;
 	}
 
 	.trip-active {
