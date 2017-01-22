@@ -1,4 +1,4 @@
 Intrepid
 ========
 
-Reworking my Maps-based Microblog project
+Updated map-based photoblog project. http://intrepid.me/profile/jgblight
